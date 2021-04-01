@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
+const db = require('./queries')
 const app = express();
 
 var corsOptions = {
@@ -20,6 +20,46 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to our dbms backend app." });
 });
+
+app.get('/customer', db.getCustomers)
+app.get('/customer/:id',db.getCustomerById);
+
+app.get('/hotel/hotellistingWithDetail',db. getHotelListingWithDetails);
+app.get('/hotel/hotellistingWithDetail/:id',db. getHotelListingWithDetailsById);
+
+
+app.get('/hotel/hotellisting',db.getHotelListing);
+app.get('/hotel/hotellisting/:id',db.getHotelListingById);
+
+app.get('/hotel/hotellistingdetail',db.getHotelListingDetails);
+app.get('/hotel/hotellistingdetail/:id',db.getHotelListingDetailsById);
+
+app.get('/hotel/hotelreview',db.getHotelReview );
+app.get('/hotel/hotelreview/:id',db.getHotelReviewById);
+
+
+app.get('/booking',db.getBooking );
+app.get('/booking/:id',db.getBookingById);
+
+app.post('/user/create',db.createUser );
+app.post('/booking/create',db.createBooking );
+app.post('/listing/create',db.createListing );
+app.post('/listingDetail/create',db.createListingDetails );
+app.post('/review/addReview',db.createHotelReview );
+
+app.post('/user/update',db.updateUser);
+app.post('/booking/update',db.updateBooking );
+app.post('/listing/update',db.updateListing );
+app.post('/listingDetail/update',db.updateListingDetails );
+app.post('/review/update',db.updateHotelReview );
+
+app.get('/user/delete/:id',db.deleteUser);
+app.get('/booking/delete/:id',db.deleteBooking );
+app.get('/listing/delete/:id',db.deleteListing );
+app.get('/listingDetail/delete/:id',db.deleteListingDetails );
+app.get('/review/delete/:id',db.deleteHotelReview );
+
+
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
