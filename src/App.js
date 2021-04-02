@@ -94,6 +94,8 @@ const Login = () => {
 
           if (response.data == false) {
             console.log("false");
+            setModalType("invalid");
+            setOpen(true);
           } else {
             history.push("/");
 
@@ -234,7 +236,7 @@ const Login = () => {
           <Modal center open={open} onClose={onCloseModal}>
             {modalType === "invalid" ? (
               <div>
-                <h2> Invalid </h2>
+                <h2> Invalid Login Details </h2>
                 <p>Invalid username or password.</p>
               </div>
             ) : modalType === "empty" ? (
@@ -372,7 +374,7 @@ const Register = () => {
               fullWidth
               variant="contained"
               color="primary"
-              className={classes.submit}
+              className={useStyles.submit}
             >
               Sign Up
             </Button>
@@ -419,7 +421,6 @@ const CheckBooking = () => {
                 textDecoration: "none",
                 color: "white",
               }}
-              // href="/login"
               color="inherit"
             >
               Sign Up
@@ -433,7 +434,6 @@ const CheckBooking = () => {
             <Link
               to="/checkbooking"
               style={{ textDecoration: "none", color: "white" }}
-              // href="/checkbooking"
               color="inherit"
             >
               <div style={{ color: " grey" }}>Check Booking</div>
