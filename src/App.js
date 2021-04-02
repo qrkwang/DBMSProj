@@ -13,6 +13,7 @@ import HotelOutlinedIcon from "@material-ui/icons/HotelOutlined";
 import {
   useHistory,
   useLocation,
+  useNavigate,
   BrowserRouter as Router,
   Switch,
   Route,
@@ -20,7 +21,7 @@ import {
 } from "react-router-dom";
 
 //material UI
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -73,6 +74,7 @@ const Login = () => {
 
   const { register, handleSubmit, control } = useForm();
   let history = useHistory(); //Navigation
+  let navigate = useNavigate(); //Navigation
 
   const validateUser = (data) => {
     if (data.email == "" || data.password == "") {
@@ -268,7 +270,6 @@ const Register = () => {
 
   const validateRegister = (data) => {
     console.log(data);
-    // {firstName: "", lastName: "", email: "", password: ""}
 
     if (
       data.name == "" ||
@@ -541,7 +542,18 @@ const CheckBooking = () => {
   );
 };
 
-const Dashboard = () => {
+const Dashboard = (props) => {
+  const { state } = useLocation();
+  const { currentUserId } = state;
+
+  const [userId, setUserId] = useState("");
+
+  console.log(currentUserId);
+
+  useEffect(() => {
+    setUserId(currentUserId);
+    console.log(userId);
+  }, [currentUserId]);
   const classes = useStyles();
   return (
     <div>
