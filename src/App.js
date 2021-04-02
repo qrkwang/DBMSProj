@@ -10,9 +10,10 @@ import {
   Avatar,
 } from "@material-ui/core";
 import HotelOutlinedIcon from "@material-ui/icons/HotelOutlined";
-
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
+//For GET/POST Request
+import Axios from 'axios'
 
 //material UI
 import React, { useRef, useState } from "react";
@@ -27,6 +28,7 @@ import Container from "@material-ui/core/Container";
 import { useForm, Controller } from "react-hook-form";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
+
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -69,7 +71,7 @@ const Login = () => {
   const onOpenModal = () => setOpen(true);
   const onCloseModal = () => setOpen(false);
 
-  const { register, handleSubmit, control } = useForm();
+  const { register, handleSubmit, errors } = useForm();
 
   const validateUser = (data) => {
     if (data.email == "" || data.password == "") {
@@ -148,7 +150,23 @@ const Login = () => {
 
 const Register = () => {
   const classes = useStyles();
-  const { register, handleSubmit, control } = useForm();
+
+  //React Hook Form
+  const { register, handleSubmit } = useForm();
+
+  //Function that interacts with Express.js & MongoDB
+  const createUser = (data) => {
+    Axios.post('customer/createuser', {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      password: data.password
+    })
+    .then(function (response) {
+      console.log(response)
+    })
+  }
+
   return (
     <Container component="main" maxWidth="xs" style={{ paddingTop: "20px" }}>
       <CssBaseline />
@@ -160,6 +178,9 @@ const Register = () => {
           className={classes.form}
           noValidate
           style={{ paddingTop: "10px" }}
+
+          //To Submit To Hook and call the createUser function that interacts with MongoDB
+          onSubmit={handleSubmit((data) => createUser(data))}
         >
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -171,6 +192,8 @@ const Register = () => {
                 fullWidth
                 id="firstName"
                 label="First Name"
+                //Register FirstName Data Field to React Hook Form
+                inputRef={register}
                 autoFocus
               />
             </Grid>
@@ -182,6 +205,7 @@ const Register = () => {
                 id="lastName"
                 label="Last Name"
                 name="lastName"
+                inputRef={register}
                 autoComplete="lname"
               />
             </Grid>
@@ -193,6 +217,7 @@ const Register = () => {
                 id="email"
                 label="Email Address"
                 name="email"
+                inputRef={register}
                 autoComplete="email"
               />
             </Grid>
@@ -205,6 +230,7 @@ const Register = () => {
                 label="Password"
                 type="password"
                 id="password"
+                inputRef={register}
                 autoComplete="current-password"
               />
             </Grid>
