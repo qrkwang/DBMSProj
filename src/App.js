@@ -626,7 +626,6 @@ const MyBookings = (props) => {
   let location = useLocation();
   let receivedUserId = location.state.currentUserId;
   const [myBookingList, setmyBookingList] = useState([]);
-
   const [currentUserId, setcurrentUserId] = useState("");
 
   useEffect(() => {
@@ -652,9 +651,14 @@ const MyBookings = (props) => {
         var responseData = response.data;
         console.log(typeof responseData);
         console.log(responseData);
-        // if (response.data == false) {
-        // } else {
-        // }
+        if (Array.isArray(responseData)) {
+          console.log("is an array");
+          setmyBookingList(responseData);
+        }
+        {
+          //Not array, was returned some other things.
+          console.log("not an array");
+        }
       })
       .catch(function (error) {});
   }, [currentUserId]);
@@ -731,6 +735,9 @@ const MyBookings = (props) => {
           <Typography component="h1" variant="h5">
             My Bookings
           </Typography>
+          {myBookingList.map((row) => (
+            <div>{row}</div>
+          ))}
         </div>
       </Container>
     </div>

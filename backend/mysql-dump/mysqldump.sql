@@ -29,10 +29,13 @@ CREATE TABLE `booking` (
   `numofguest` int(11) DEFAULT NULL,
   `isCanceled` tinyint(1) DEFAULT NULL,
   `customerid` int(11) DEFAULT NULL,
+  `listingid` int(11) NOT NULL,
   `roomType` varchar(155) DEFAULT NULL,
   PRIMARY KEY (`bookingid`),
+  KEY `listingid` (`listingid`),
+  CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`listingid`) REFERENCES `listing` (`listingid`),
   KEY `customerid` (`customerid`),
-  CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`customerid`) REFERENCES `customer` (`customerid`)
+  CONSTRAINT `booking_ibfk_2` FOREIGN KEY (`customerid`) REFERENCES `customer` (`customerid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -42,7 +45,7 @@ CREATE TABLE `booking` (
 
 LOCK TABLES `booking` WRITE;
 /*!40000 ALTER TABLE `booking` DISABLE KEYS */;
-INSERT INTO `booking` VALUES (1,'2021-04-04','2021-08-04',3,0,1,'Deluxe');
+INSERT INTO `booking` VALUES (1,'2021-04-04','2021-08-04',3,0,1,1,'Deluxe');
 /*!40000 ALTER TABLE `booking` ENABLE KEYS */;
 UNLOCK TABLES;
 
