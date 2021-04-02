@@ -20,8 +20,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to our dbms backend app." });
 });
-
-app.get('/customer', db.getCustomers)
+app.post('/customer/login', db.loginUser);
+app.get('/customer', db.getCustomers);
 app.get('/customer/:id',db.getCustomerById);
 
 app.get('/hotel/hotellistingWithDetail',db. getHotelListingWithDetails);
