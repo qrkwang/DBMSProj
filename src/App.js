@@ -156,7 +156,7 @@ const Register = () => {
 
   //Function that interacts with Express.js & MongoDB
   const createUser = (data) => {
-    Axios.post('customer/createuser', {
+    Axios.post('/customer/createuser', {
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
