@@ -493,6 +493,49 @@ const Register = (props) => {
 
 const CheckBooking = () => {
   const classes = useStyles();
+  //States
+  const [open, setOpen] = useState(false); //Open or close modal;
+  const [modalType, setModalType] = useState("empty"); //State for modalType to let modal appear as the specific type. (e.g. invalid, error)
+  const [bookingItem, setbookingItem] = useState("");
+
+  //Modal Functions
+  const onOpenModal = () => setOpen(true);
+  const onCloseModal = () => setOpen(false);
+
+  const inputBookingIdRef = useRef();
+
+  const validateBookingId = () => {
+    let input = inputBookingIdRef.current.value;
+    console.log("clicked", input);
+    if (input == "") {
+      setModalType("empty");
+      setOpen(true);
+    } else {
+      const url = `/booking/${input}`;
+
+      instance
+        .get(url)
+        .then(function (response) {
+          var responseData = response.data;
+          console.log(typeof responseData);
+          console.log(responseData);
+          if (Array.isArray(responseData)) {
+            if (responseData.length == 0) {
+              setModalType("invalid");
+              setOpen(true);
+            } else {
+              setbookingItem(responseData[0]);
+              setModalType("found");
+              setOpen(true);
+            }
+          } else {
+            //Not array, was returned some other things.
+            console.log("not an array");
+          }
+        })
+        .catch(function (error) {});
+    }
+  };
   return (
     <div>
       {/* Personalized toolbar for each specific page */}
@@ -547,6 +590,54 @@ const CheckBooking = () => {
           <Typography component="h1" variant="h5">
             Check Booking
           </Typography>
+          <TextField
+            margin="normal"
+            fullWidth
+            inputRef={inputBookingIdRef}
+            id="email"
+            label="Enter your Booking ID"
+            name="email"
+            autoFocus
+            style={{ paddingBottom: "20px" }}
+          />
+          <Button
+            onClick={() => validateBookingId()}
+            variant="contained"
+            color="primary"
+          >
+            <text style={{ fontSize: "17px" }}>Enter</text>
+          </Button>
+          <Modal
+            closeOnOverlayClick={false}
+            center
+            open={open}
+            onClose={onCloseModal}
+          >
+            {modalType === "invalid" ? (
+              <div>
+                <h2> Invalid Booking ID </h2>
+                <p>Your booking could not be found.</p>
+              </div>
+            ) : modalType === "empty" ? (
+              <div>
+                <h2> Empty fields</h2>
+                <p>Please fill in all fields before logging in.</p>
+              </div>
+            ) : modalType === "found" ? (
+              <div>
+                <h2> Booking details</h2>
+                <p> {bookingItem.bookingid}</p>
+                <p> {bookingItem.checkindate}</p>
+                <p> {bookingItem.checkoutdate}</p>
+                <p> {bookingItem.bookingid}</p>
+              </div>
+            ) : (
+              <div>
+                <h2> Error fetching</h2>
+                <p>Please contact the administrator.</p>
+              </div>
+            )}
+          </Modal>
         </div>
       </Container>
     </div>

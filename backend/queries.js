@@ -163,10 +163,14 @@ const getBooking = (request, response) => {
     response.status(200).json(results);
   });
 };
+//SELECT student.name FROM student INNER JOIN copy ON student.email = copy.owner WHERE
+//"SELECT * FROM Listing inner join HotelListingDetails on Listing.listingid = HotelListingDetails.listingid",
+
 const getBookingById = (request, response) => {
   const id = parseInt(request.params.id);
   connection.query(
-    "SELECT * FROM booking WHERE bookingid = " + [id],
+    "SELECT * FROM booking INNER JOIN listing ON booking.listingid = listing.listingid WHERE booking.bookingid = " +
+      [id],
     (error, results) => {
       if (error) {
         throw error;
