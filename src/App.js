@@ -70,6 +70,15 @@ const Login = () => {
   const onCloseModal = () => setOpen(false);
 
   const { register, handleSubmit, control } = useForm();
+
+  const validateUser = (data) => {
+    if (data.email == "" || data.password == "") {
+      setOpen(true);
+    } else {
+      console.log("ID", data.email);
+      console.log("pw", data.password);
+    }
+  };
   return (
     <div>
       <Container component="main" maxWidth="xs" style={{ paddingTop: "20px" }}>
@@ -81,7 +90,7 @@ const Login = () => {
           <form
             className={useStyles.form}
             noValidate
-            onSubmit={handleSubmit((data) => alert(JSON.stringify(data)))}
+            onSubmit={handleSubmit((data) => validateUser(data))}
           >
             <TextField
               variant="outlined"
@@ -126,7 +135,10 @@ const Login = () => {
             </Grid>
           </form>
           <Modal center open={open} onClose={onCloseModal}>
-            <h2>Simple centered modal</h2>
+            <div>
+              <h2> Empty fields</h2>
+              <p>Please fill in all fields before logging in.</p>
+            </div>{" "}
           </Modal>
         </div>
       </Container>
