@@ -156,7 +156,23 @@ const getBooking = (request, response) => {
     var db = client.db(database)
     var bookingId = request.body.bookingId
 
-    db.collection("bookings").findOne({ "_id": objectId(bookingId) }).toArray(function (err, result) {
+    db.collection("bookings").find().toArray(function (err, result) {
+      if (err) throw err
+
+      response.status(200).json(result)
+    })
+  })
+}
+
+const getBookingById = (request, response) => {
+  MongoClient.connect(MongoDBUrl, function (err, client) {
+    if (err) throw err
+
+    var db = client.db(database)
+    var bookingId = request.body.bookingId
+
+    //To change to inner join
+    db.collection("bookings").findOne({"_id": bookingId}).toArray(function (err, result) {
       if (err) throw err
 
       response.status(200).json(result)
@@ -170,11 +186,12 @@ const createUser = (request, response) => {
 
     var db = client.db(database)
     var user = {
-      name: request.body.name,
-      username: request.body.username,
+      firstName: request.body.firstName,
+      lastName: request.body.lastName,
+      email: request.body.email,
       password: request.body.password,
-      address: request.body.address,
-      contactNo: request.body.contactNo
+      //address: request.body.address,
+      //contactNo: request.body.contactNo
     }
 
     db.collection("customer").insertOne(user, function (err, result) {

@@ -73,7 +73,7 @@ const Login = (props) => {
   const onOpenModal = () => setOpen(true);
   const onCloseModal = () => setOpen(false);
 
-  const { register, handleSubmit, control } = useForm();
+  const { register, handleSubmit, errors } = useForm();
 
   const validateUser = (data) => {
     if (data.email == "" || data.password == "") {

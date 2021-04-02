@@ -1,8 +1,10 @@
 const express = require('express');
 const app = express();
 const db = require('./queries')
+const bodyParser = require('body-parser')
 
-
+//Parse passed data into request.body
+app.use(bodyParser.json());
 
 app.get('/customer', db.getCustomers);
 app.get('/customer/customerbyid', db.getCustomersById);
@@ -21,7 +23,7 @@ app.post('/booking/createbooking', db.createBooking);
 app.post('/hotel/createhotelreview', db.createHotelReview);
 app.post('/hotel/createlistingdetails', db.createListingDetails);
 app.post('/hotel/createlisting', db.createListing);
-app.post('customer/updateuser', db.updateUser);
+app.post('/customer/updateuser', db.updateUser);
 app.post('/booking/updatebooking', db.updateBooking);
 app.post('/hotel/updatehotelreview', db.updateHotelReview);
 app.post('/hotel/hotellisting', db.updateListing);
