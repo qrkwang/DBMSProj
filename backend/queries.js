@@ -29,6 +29,26 @@ var connection = initializeConnection({
     database: 'tpdbv1',
     password: 'teamDB',
 })
+const loginUser = (request, response) => {
+  const sql = "Select * from customer where username = ? and password = ?";
+  connection.query(sql, [request.body.username, request.body.password], (error, results, fields) => {
+    if(results.length > 0)
+    {
+
+ 
+  if(results)
+  {
+      response.status(200).json(results);
+  }
+
+}  else
+  {
+    response.status(200).send('false');
+  }
+
+})
+  
+}
 const getCustomers = (request, response) => {
     
   
@@ -361,5 +381,6 @@ module.exports = {
     deleteHotelReview,
     deleteListing,
     deleteListingDetails,
-    deleteUser
+    deleteUser,
+    loginUser
 }
