@@ -7,8 +7,10 @@ import {
   Typography,
   Button,
   Avatar,
+  Paper,
 } from "@material-ui/core";
 import HotelOutlinedIcon from "@material-ui/icons/HotelOutlined";
+import Moment from "react-moment";
 
 import {
   useLocation,
@@ -59,6 +61,14 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "50px",
     color: "black",
     paddingRight: "20px",
+  },
+  paperModal: {
+    boxShadow: "none",
+    paddingLeft: "5vw",
+
+    padding: theme.spacing(1),
+    textAlign: "left",
+    color: theme.palette.text.secondary,
   },
 }));
 
@@ -524,6 +534,8 @@ const CheckBooking = () => {
               setModalType("invalid");
               setOpen(true);
             } else {
+              // responseData[0].checkindate = "";
+              // responseData[0].checkoutdate = "";
               setbookingItem(responseData[0]);
               setModalType("found");
               setOpen(true);
@@ -595,7 +607,7 @@ const CheckBooking = () => {
             fullWidth
             inputRef={inputBookingIdRef}
             id="email"
-            label="Enter your Booking ID"
+            label="Enter your Booking Number"
             name="email"
             autoFocus
             style={{ paddingBottom: "20px" }}
@@ -625,11 +637,82 @@ const CheckBooking = () => {
               </div>
             ) : modalType === "found" ? (
               <div>
-                <h2> Booking details</h2>
-                <p> {bookingItem.bookingid}</p>
-                <p> {bookingItem.checkindate}</p>
-                <p> {bookingItem.checkoutdate}</p>
-                <p> {bookingItem.bookingid}</p>
+                <h2 style={{ textAlign: "center" }}> Booking details</h2>
+
+                <Grid container spacing={1}>
+                  <Grid item xs={5}>
+                    <Paper className={classes.paperModal}>Hotel Name:</Paper>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Paper
+                      style={{ paddingLeft: "2vw" }}
+                      className={classes.paperModal}
+                    >
+                      {bookingItem.hotelname}
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={5}>
+                    <Paper className={classes.paperModal}>Address:</Paper>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Paper
+                      style={{ paddingLeft: "2vw" }}
+                      className={classes.paperModal}
+                    >
+                      {bookingItem.address}
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={5}>
+                    <Paper className={classes.paperModal}>Room Type:</Paper>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Paper
+                      style={{ paddingLeft: "2vw" }}
+                      className={classes.paperModal}
+                    >
+                      {bookingItem.roomType}
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={5}>
+                    <Paper className={classes.paperModal}>Guests:</Paper>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Paper
+                      style={{ paddingLeft: "2vw" }}
+                      className={classes.paperModal}
+                    >
+                      {bookingItem.numofguest}
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={5}>
+                    <Paper className={classes.paperModal}>Check In Date:</Paper>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Paper
+                      style={{ paddingLeft: "2vw" }}
+                      className={classes.paperModal}
+                    >
+                      <Moment format="D MMM YYYY">
+                        {bookingItem.checkindate}
+                      </Moment>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={5}>
+                    <Paper className={classes.paperModal}>
+                      Check Out Date:
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Paper
+                      style={{ paddingLeft: "2vw" }}
+                      className={classes.paperModal}
+                    >
+                      <Moment format="D MMM YYYY">
+                        {bookingItem.checkoutdate}
+                      </Moment>
+                    </Paper>
+                  </Grid>
+                </Grid>
               </div>
             ) : (
               <div>
