@@ -13,7 +13,6 @@ import HotelOutlinedIcon from "@material-ui/icons/HotelOutlined";
 import {
   useHistory,
   useLocation,
-  useNavigate,
   BrowserRouter as Router,
   Switch,
   Route,
@@ -74,7 +73,6 @@ const Login = () => {
 
   const { register, handleSubmit, control } = useForm();
   let history = useHistory(); //Navigation
-  let navigate = useNavigate(); //Navigation
 
   const validateUser = (data) => {
     if (data.email == "" || data.password == "") {
