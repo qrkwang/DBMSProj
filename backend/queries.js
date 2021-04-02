@@ -184,7 +184,16 @@ const getCustomers = (request, response) => {
       response.status(200).json(results)
     });
   }
-
+  const getBookingByCustomerId = (request, response) => {
+  
+    const id = parseInt(request.params.id)
+    connection.query('SELECT * FROM booking WHERE customerid = '+[id],  (error, results) =>  {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results)
+    });
+  }
 
 
 const createListing = (request, response) => {
@@ -232,11 +241,25 @@ const createBooking = (request, response) => {
 }
 
 const createUser = (request, response) => {
-  const sql = "Insert into customer(name, username,password,address,contactno) values (?,?,?,?,?)";
-  connection.query(sql, [request.body.name, request.body.username,request.body.password, request.body.address,request.body.contactno], (error, results, fields) => {
 
-  response.status(200).json(results);
-})
+
+  const sql = "Select * from customer where username = ?";
+  connection.query(sql, [request.body.username], (error, results, fields) => {
+
+    if(results.length == 0)
+    { 
+       const sql = "Insert into customer(name, username,password,address,contactno) values (?,?,?,?,?)";
+        connection.query(sql, [request.body.name, request.body.username,request.body.password, request.body.address,request.body.contactno], (error, results, fields) => {
+        response.status(200).send("Success");})
+    }
+    else{
+      response.status(200).send("isExist");
+    }
+
+  })
+  
+
+
   
 }
 
@@ -382,5 +405,6 @@ module.exports = {
     deleteListing,
     deleteListingDetails,
     deleteUser,
-    loginUser
+    loginUser,
+    getBookingByCustomerId
 }

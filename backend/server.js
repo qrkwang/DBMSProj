@@ -40,6 +40,7 @@ app.get('/hotel/hotelreview/:id',db.getHotelReviewById);
 
 app.get('/booking',db.getBooking );
 app.get('/booking/:id',db.getBookingById);
+app.get('/booking/customer/:id', db.getBookingByCustomerId);
 
 app.post('/user/create',db.createUser );
 app.post('/booking/create',db.createBooking );
