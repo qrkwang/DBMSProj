@@ -7,16 +7,15 @@ import {
   Toolbar,
   Typography,
   Button,
+  Avatar,
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
 import HotelOutlinedIcon from "@material-ui/icons/HotelOutlined";
-import { AppBar, Toolbar, Typography, Button, Avatar } from "@material-ui/core";
 
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 
 //material UI
-import React from "react";
+import React, { useRef, useState } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -26,6 +25,8 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useForm, Controller } from "react-hook-form";
+import "react-responsive-modal/styles.css";
+import { Modal } from "react-responsive-modal";
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -51,12 +52,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Home = () => (
-  <div>
-    <h2>Home Page</h2>{" "}
-    <p> This is definitely not what our app will look like</p>
-  </div>
-);
+// const Home = () => (
+//   <div>
+//     <h2>Home Page</h2>{" "}
+//     <p> This is definitely not what our app will look like</p>
+//   </div>
+// );
 const CheckBooking = () => (
   <div>
     <h2>Check Booking</h2>{" "}
@@ -64,10 +65,14 @@ const CheckBooking = () => (
 );
 
 const Login = () => {
+  const [open, setOpen] = useState(false);
+  const onOpenModal = () => setOpen(true);
+  const onCloseModal = () => setOpen(false);
+
   const { register, handleSubmit, control } = useForm();
   return (
     <div>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="xs" style={{ paddingTop: "20px" }}>
         <CssBaseline />
         <div className={useStyles.paper}>
           <Typography component="h1" variant="h5">
@@ -102,18 +107,7 @@ const Login = () => {
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel
-              control={
-                <Controller
-                  as={Checkbox}
-                  control={control}
-                  name="remember"
-                  color="primary"
-                  defaultValue={false}
-                />
-              }
-              label="Remember me"
-            />
+
             <Button
               type="submit"
               fullWidth
@@ -123,12 +117,7 @@ const Login = () => {
             >
               Login
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
+            <Grid container style={{ paddingTop: "10px" }}>
               <Grid item>
                 <Link to="/register" variant="body2">
                   {"Don't have an account? Sign Up"}
@@ -136,6 +125,9 @@ const Login = () => {
               </Grid>
             </Grid>
           </form>
+          <Modal center open={open} onClose={onCloseModal}>
+            <h2>Simple centered modal</h2>
+          </Modal>
         </div>
       </Container>
     </div>
@@ -146,13 +138,17 @@ const Register = () => {
   const classes = useStyles();
   const { register, handleSubmit, control } = useForm();
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="xs" style={{ paddingTop: "20px" }}>
       <CssBaseline />
       <div className={classes.paper}>
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form
+          className={classes.form}
+          noValidate
+          style={{ paddingTop: "10px" }}
+        >
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -210,7 +206,7 @@ const Register = () => {
           >
             Sign Up
           </Button>
-          <Grid container justify="flex-end">
+          <Grid container style={{ paddingTop: "10px" }}>
             <Grid item>
               <Link to="/login" variant="body2">
                 Already have an account? Sign in
@@ -283,7 +279,7 @@ function App() {
       </AppBar>
       <Switch>
         <Route exact path="/">
-          <Home />
+          <Login />
         </Route>
 
         <Route path="/checkbooking">
