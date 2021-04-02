@@ -625,6 +625,7 @@ const MyBookings = (props) => {
   let history = useHistory();
   let location = useLocation();
   let receivedUserId = location.state.currentUserId;
+  const [myBookingList, setmyBookingList] = useState([]);
 
   const [currentUserId, setcurrentUserId] = useState("");
 
@@ -633,9 +634,29 @@ const MyBookings = (props) => {
     console.log(receivedUserId);
   }, [receivedUserId]);
 
+  //Use this to stop first render from triggering axios request which leads to error
+  const isFirstRun = useRef(true);
+
   useEffect(() => {
-    //do fetching here
-    console.log("do fetching here");
+    //if first render, don't do anything
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+    console.log("do fetching here", currentUserId);
+    const url = `/booking/customer/${currentUserId}`;
+
+    instance
+      .get(url)
+      .then(function (response) {
+        var responseData = response.data;
+        console.log(typeof responseData);
+        console.log(responseData);
+        // if (response.data == false) {
+        // } else {
+        // }
+      })
+      .catch(function (error) {});
   }, [currentUserId]);
 
   return (
