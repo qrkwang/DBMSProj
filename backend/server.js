@@ -1,11 +1,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const db = require('./queries')
+const db = require("./queries");
 const app = express();
 
 var corsOptions = {
-  origin: "http://localhost:8081",
+  origin: "http://localhost:3000",
 };
 
 app.use(cors(corsOptions));
@@ -20,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to our dbms backend app." });
 });
+
 app.post('/customer/login', db.loginUser);
 app.get('/customer', db.getCustomers);
 app.get('/customer/:id',db.getCustomerById);
@@ -59,8 +60,6 @@ app.get('/booking/delete/:id',db.deleteBooking );
 app.get('/listing/delete/:id',db.deleteListing );
 app.get('/listingDetail/delete/:id',db.deleteListingDetails );
 app.get('/review/delete/:id',db.deleteHotelReview );
-
-
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
