@@ -28,7 +28,7 @@ app.get(
 );
 app.get("/booking", db.getBooking);
 app.get("/booking/bookingbyid", db.getBookingById);
-app.post("/customer/createuser", db.createUser);
+app.post("/user/create", db.createUser);
 app.post("/booking/createbooking", db.createBooking);
 app.post("/hotel/createhotelreview", db.createHotelReview);
 app.post("/hotel/createlistingdetails", db.createListingDetails);
