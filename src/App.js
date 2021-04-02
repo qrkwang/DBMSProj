@@ -563,11 +563,101 @@ const Dashboard = (props) => {
             className={classes.title}
           >
             <Link
-              to="/dashboard"
+              to={{
+                pathname: "/dashboard",
+                state: { currentUserId: currentUserId },
+              }}
               style={{ textDecoration: "none", color: "white" }}
               color="inherit"
             >
               <div style={{ color: " grey" }}>Home</div>
+            </Link>
+          </Typography>
+          <Typography variant="h6" className={classes.title}>
+            <Link
+              to="/profile"
+              style={{
+                textDecoration: "none",
+                color: "white",
+              }}
+              color="inherit"
+            >
+              Profile
+            </Link>
+          </Typography>
+          <Typography variant="h6" className={classes.title}>
+            <Link
+              to={{
+                pathname: "/mybookings",
+                state: { currentUserId: currentUserId },
+              }}
+              style={{ textDecoration: "none", color: "white" }}
+              color="inherit"
+            >
+              My Bookings
+            </Link>
+          </Typography>
+          <Typography variant="h6" className={classes.title}>
+            <Link
+              to="/"
+              style={{ textDecoration: "none", color: "white" }}
+              color="inherit"
+            >
+              Logout
+            </Link>{" "}
+          </Typography>{" "}
+        </Toolbar>
+      </AppBar>
+
+      <Container component="main" maxWidth="xs" style={{ paddingTop: "20px" }}>
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Typography component="h1" variant="h5">
+            Show Hotel listing here {currentUserId}
+          </Typography>
+        </div>
+      </Container>
+    </div>
+  );
+};
+const MyBookings = (props) => {
+  const classes = useStyles();
+  let history = useHistory();
+  let location = useLocation();
+  let receivedUserId = location.state.currentUserId;
+
+  const [currentUserId, setcurrentUserId] = useState("");
+
+  useEffect(() => {
+    setcurrentUserId(receivedUserId);
+    console.log(receivedUserId);
+  }, [receivedUserId]);
+
+  useEffect(() => {
+    //do fetching here
+    console.log("do fetching here");
+  }, [currentUserId]);
+
+  return (
+    <div>
+      {/* Personalized toolbar for each specific page */}
+      <AppBar position="static">
+        <Toolbar>
+          <HotelOutlinedIcon className={classes.icon}></HotelOutlinedIcon>
+          <Typography
+            variant="h6"
+            style={{ paddingLeft: "30px" }}
+            className={classes.title}
+          >
+            <Link
+              to={{
+                pathname: "/dashboard",
+                state: { currentUserId: currentUserId },
+              }}
+              style={{ textDecoration: "none", color: "white" }}
+              color="inherit"
+            >
+              Home
             </Link>
           </Typography>
           <Typography variant="h6" className={classes.title}>
@@ -588,6 +678,22 @@ const Dashboard = (props) => {
             className={classes.title}
           >
             <Link
+              to={{
+                pathname: "/mybookings",
+                state: { currentUserId: currentUserId },
+              }}
+              style={{ textDecoration: "none", color: "white" }}
+              color="inherit"
+            >
+              <div style={{ color: " grey" }}>My Bookings</div>
+            </Link>
+          </Typography>
+          <Typography
+            href="/checkbooking"
+            variant="h6"
+            className={classes.title}
+          >
+            <Link
               to="/"
               style={{ textDecoration: "none", color: "white" }}
               color="inherit"
@@ -600,9 +706,9 @@ const Dashboard = (props) => {
 
       <Container component="main" maxWidth="xs" style={{ paddingTop: "20px" }}>
         <CssBaseline />
-        <div className={classes.paper}>
+        <div>
           <Typography component="h1" variant="h5">
-            Show Hotel listing here {currentUserId}
+            My Bookings
           </Typography>
         </div>
       </Container>
@@ -632,6 +738,10 @@ function App() {
 
         <Route path="/dashboard">
           <Dashboard />
+        </Route>
+
+        <Route path="/mybookings">
+          <MyBookings />
         </Route>
       </Switch>
     </div>
