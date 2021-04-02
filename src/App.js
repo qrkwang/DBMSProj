@@ -300,10 +300,14 @@ const Register = (props) => {
           console.log(typeof responseData);
           console.log(response);
           // name, username, password, address, contactno;
-          if (response.data.affectedRows == 1) {
+          if (response.data == "Success") {
             console.log("added");
             setModalType("added");
             setOpen(true);
+          } else if (response.data == "isExist") {
+            setModalType("exist");
+            setOpen(true);
+            console.log("account already exists");
           } else {
             console.log(response);
           }
@@ -407,6 +411,7 @@ const Register = (props) => {
                   variant="outlined"
                   inputRef={register}
                   required
+                  type="number"
                   fullWidth
                   id="contactno"
                   label="Contact Number"
@@ -467,6 +472,11 @@ const Register = (props) => {
               <div>
                 <h2> User Created</h2>
                 <p>You can proceed to login now.</p>
+              </div>
+            ) : modalType === "exist" ? (
+              <div>
+                <h2> Account Exists </h2>
+                <p>Account already exists.</p>
               </div>
             ) : (
               <div>
@@ -654,8 +664,7 @@ const MyBookings = (props) => {
         if (Array.isArray(responseData)) {
           console.log("is an array");
           setmyBookingList(responseData);
-        }
-        {
+        } else {
           //Not array, was returned some other things.
           console.log("not an array");
         }
@@ -736,7 +745,10 @@ const MyBookings = (props) => {
             My Bookings
           </Typography>
           {myBookingList.map((row) => (
-            <div>{row}</div>
+            <div>
+              <p>{row.checkindate}</p>
+              <p>{row.checkoutdate}</p>
+            </div>
           ))}
         </div>
       </Container>
