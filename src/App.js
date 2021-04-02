@@ -97,13 +97,11 @@ const Login = () => {
             setModalType("invalid");
             setOpen(true);
           } else {
-            history.push("/dashboard");
-
-            // this.props.history.push("/Booking", {
-            //   state: {
-            //     currentUserId: responseData.customerid,
-            //   },
-            // });
+            history.push("/Dashboard", {
+              state: {
+                currentUserId: responseData.customerid,
+              },
+            });
           }
         })
         .catch(function (error) {
@@ -138,7 +136,6 @@ const Login = () => {
             </Link>{" "}
           </Typography> */}
           <Typography
-            href="/"
             variant="h6"
             style={{ paddingLeft: "30px" }}
             className={classes.title}
@@ -146,13 +143,12 @@ const Login = () => {
             <Link
               to="/"
               style={{ textDecoration: "none", color: "white" }}
-              // href="/login"
               color="inherit"
             >
               <div style={{ color: " grey" }}>Login</div>
             </Link>
           </Typography>
-          <Typography href="/register" variant="h6" className={classes.title}>
+          <Typography variant="h6" className={classes.title}>
             <Link
               to="/register"
               style={{ textDecoration: "none", color: "white" }}
@@ -162,11 +158,7 @@ const Login = () => {
               Sign Up
             </Link>
           </Typography>
-          <Typography
-            href="/checkbooking"
-            variant="h6"
-            className={classes.title}
-          >
+          <Typography variant="h6" className={classes.title}>
             <Link
               to="/checkbooking"
               style={{ textDecoration: "none", color: "white" }}
@@ -258,8 +250,69 @@ const Login = () => {
 };
 
 const Register = () => {
-  const classes = useStyles();
+  const classes = useStyles({});
+  //States
+  const [open, setOpen] = useState(false); //Open or close modal;
+  const [modalType, setModalType] = useState("empty"); //State for modalType to let modal appear as the specific type. (e.g. invalid, error)
+
+  let history = useHistory(); //Navigation
+
+  //Modal Functions
+  const onOpenModal = () => setOpen(true);
+  const onCloseModal = () => {
+    history.push("/");
+    setOpen(false);
+  };
+
   const { register, handleSubmit, control } = useForm();
+
+  const validateRegister = (data) => {
+    console.log(data);
+    // {firstName: "", lastName: "", email: "", password: ""}
+
+    if (
+      data.name == "" ||
+      data.address == "" ||
+      data.contactno == "" ||
+      data.email == "" ||
+      data.password == ""
+    ) {
+      setModalType("empty");
+
+      setOpen(true);
+    } else {
+      //Not empty, proceed with calling API
+      console.log("ID", data.email);
+      console.log("pw", data.password);
+
+      instance
+        .post("/user/create", {
+          name: data.name,
+          username: data.email,
+          password: data.password,
+          address: data.address,
+          contactno: data.contactno,
+        })
+        .then(function (response) {
+          var responseData = response.data;
+          console.log(typeof responseData);
+          console.log(response);
+          // name, username, password, address, contactno;
+          if (response.data.affectedRows == 1) {
+            console.log("added");
+            setModalType("added");
+            setOpen(true);
+          } else {
+            console.log(response);
+          }
+        })
+        .catch(function (error) {
+          setModalType("error");
+          setOpen(true);
+          console.log(error);
+        });
+    }
+  };
   return (
     <div>
       {/* Personalized toolbar for each specific page */}
@@ -301,7 +354,6 @@ const Register = () => {
             <Link
               to="/checkbooking"
               style={{ textDecoration: "none", color: "white" }}
-              // href="/checkbooking"
               color="inherit"
             >
               Check Bookings
@@ -317,37 +369,53 @@ const Register = () => {
             Sign up
           </Typography>
           <form
+            onSubmit={handleSubmit((data) => validateRegister(data))}
             className={classes.form}
             noValidate
             style={{ paddingTop: "10px" }}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
-                  autoComplete="fname"
-                  name="firstName"
+                  autoComplete="name"
+                  name="name"
+                  inputRef={register}
                   variant="outlined"
                   required
                   fullWidth
-                  id="firstName"
-                  label="First Name"
+                  id="name"
+                  label="Full Name"
                   autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="lname"
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
+                  inputRef={register}
+                  required
+                  fullWidth
+                  id="address"
+                  label="Home Address"
+                  name="address"
+                  autoComplete="address"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  inputRef={register}
+                  required
+                  fullWidth
+                  id="contactno"
+                  label="Contact Number"
+                  name="contactno"
+                  autoComplete="contactno"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  inputRef={register}
                   required
                   fullWidth
                   id="email"
@@ -359,6 +427,7 @@ const Register = () => {
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
+                  inputRef={register}
                   required
                   fullWidth
                   name="password"
@@ -386,6 +455,24 @@ const Register = () => {
               </Grid>
             </Grid>
           </form>
+          <Modal center open={open} onClose={onCloseModal}>
+            {modalType === "empty" ? (
+              <div>
+                <h2> Empty fields</h2>
+                <p>Please fill in all fields before signing up.</p>
+              </div>
+            ) : modalType === "added" ? (
+              <div>
+                <h2> User Created</h2>
+                <p>You can proceed to login now.</p>
+              </div>
+            ) : (
+              <div>
+                <h2> Error Fetching </h2>
+                <p>Please contact the administrator.</p>
+              </div>
+            )}
+          </Modal>
         </div>
       </Container>
     </div>
