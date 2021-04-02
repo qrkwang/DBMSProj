@@ -97,7 +97,7 @@ const Login = () => {
             setModalType("invalid");
             setOpen(true);
           } else {
-            history.push("/");
+            history.push("/dashboard");
 
             // this.props.history.push("/Booking", {
             //   state: {
@@ -453,6 +453,68 @@ const CheckBooking = () => {
     </div>
   );
 };
+
+const Dashboard = () => {
+  const classes = useStyles();
+  return (
+    <div>
+      {/* Personalized toolbar for each specific page */}
+      <AppBar position="static">
+        <Toolbar>
+          <HotelOutlinedIcon className={classes.icon}></HotelOutlinedIcon>
+          <Typography
+            variant="h6"
+            style={{ paddingLeft: "30px" }}
+            className={classes.title}
+          >
+            <Link
+              to="/dashboard"
+              style={{ textDecoration: "none", color: "white" }}
+              color="inherit"
+            >
+              <div style={{ color: " grey" }}>Home</div>
+            </Link>
+          </Typography>
+          <Typography variant="h6" className={classes.title}>
+            <Link
+              to="/profile"
+              style={{
+                textDecoration: "none",
+                color: "white",
+              }}
+              color="inherit"
+            >
+              Profile
+            </Link>
+          </Typography>
+          <Typography
+            href="/checkbooking"
+            variant="h6"
+            className={classes.title}
+          >
+            <Link
+              to="/"
+              style={{ textDecoration: "none", color: "white" }}
+              color="inherit"
+            >
+              Logout
+            </Link>{" "}
+          </Typography>{" "}
+        </Toolbar>
+      </AppBar>
+
+      <Container component="main" maxWidth="xs" style={{ paddingTop: "20px" }}>
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Typography component="h1" variant="h5">
+            Show Hotel listing here
+          </Typography>
+        </div>
+      </Container>
+    </div>
+  );
+};
+
 function App() {
   return (
     <div className="App">
@@ -471,6 +533,10 @@ function App() {
 
         <Route path="/register">
           <Register />
+        </Route>
+
+        <Route path="/dashboard">
+          <Dashboard />
         </Route>
       </Switch>
     </div>
