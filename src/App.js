@@ -11,12 +11,12 @@ import {
 import HotelOutlinedIcon from "@material-ui/icons/HotelOutlined";
 
 import {
-  useHistory,
   useLocation,
   BrowserRouter as Router,
   Switch,
   Route,
   Link,
+  useHistory,
 } from "react-router-dom";
 
 //material UI
@@ -32,6 +32,7 @@ import Container from "@material-ui/core/Container";
 import { useForm, Controller } from "react-hook-form";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
+import ReactDOM from "react-dom";
 
 //Made axios global
 const axios = require("axios"); //use axios for http requests
@@ -61,8 +62,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = () => {
+const Login = (props) => {
   const classes = useStyles({});
+  let history = useHistory(); //Navigation
 
   //States
   const [open, setOpen] = useState(false); //Open or close modal;
@@ -72,7 +74,6 @@ const Login = () => {
   const onCloseModal = () => setOpen(false);
 
   const { register, handleSubmit, control } = useForm();
-  let history = useHistory(); //Navigation
 
   const validateUser = (data) => {
     if (data.email == "" || data.password == "") {
@@ -97,10 +98,12 @@ const Login = () => {
             setModalType("invalid");
             setOpen(true);
           } else {
-            history.push("/Dashboard", {
-              state: {
-                currentUserId: responseData.customerid,
-              },
+            console.log(responseData[0].address);
+            console.log("customerID is ", responseData[0].customerid);
+
+            history.push({
+              pathname: "/Dashboard",
+              state: { currentUserId: responseData[0].customerid },
             });
           }
         })
@@ -249,7 +252,7 @@ const Login = () => {
   );
 };
 
-const Register = () => {
+const Register = (props) => {
   const classes = useStyles({});
   //States
   const [open, setOpen] = useState(false); //Open or close modal;
@@ -541,18 +544,13 @@ const CheckBooking = () => {
 };
 
 const Dashboard = (props) => {
-  const { state } = useLocation();
-  const { currentUserId } = state;
-
-  const [userId, setUserId] = useState("");
-
-  console.log(currentUserId);
-
-  useEffect(() => {
-    setUserId(currentUserId);
-    console.log(userId);
-  }, [currentUserId]);
   const classes = useStyles();
+  let history = useHistory();
+  let location = useLocation();
+  let receivedUserId = location.state.currentUserId;
+
+  const [currentUserId, setcurrentUserId] = useState(receivedUserId);
+
   return (
     <div>
       {/* Personalized toolbar for each specific page */}
@@ -604,7 +602,7 @@ const Dashboard = (props) => {
         <CssBaseline />
         <div className={classes.paper}>
           <Typography component="h1" variant="h5">
-            Show Hotel listing here
+            Show Hotel listing here {currentUserId}
           </Typography>
         </div>
       </Container>
