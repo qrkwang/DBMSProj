@@ -1,9 +1,15 @@
 import logo from "./logo.svg";
 import "./App.css";
 import { Link, Route, Switch } from "react-router-dom";
-import { AppBar, Toolbar, Typography, Button } from "@material-ui/core";
+import {
+  Divider,
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-
+import HotelOutlinedIcon from "@material-ui/icons/HotelOutlined";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 
@@ -22,6 +28,12 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       opacity: 0.5,
     },
+  },
+  icon: {
+    borderRight: "3px solid black",
+    fontSize: "50px",
+    color: "black",
+    paddingRight: "20px",
   },
 }));
 
@@ -45,7 +57,13 @@ function App() {
     <div className="App">
       <AppBar position="static">
         <Toolbar>
-          <Typography href="/" variant="h6" className={classes.title}>
+          <HotelOutlinedIcon className={classes.icon}></HotelOutlinedIcon>
+          <Typography
+            href="/"
+            variant="h6"
+            style={{ paddingLeft: "30px" }}
+            className={classes.title}
+          >
             <Link
               to="/"
               style={{ textDecoration: "none", color: "white" }}
