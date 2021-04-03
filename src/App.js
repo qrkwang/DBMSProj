@@ -788,9 +788,11 @@ const BookingHotel = (props) => {
             roomType: "",
             numOfRooms: "",
           };
-          let hotelRoomArray = [];
-          console.log("is an array");
+          var hotelRoomArray = [];
+          console.log("is an array", hotelRoomArray);
           responseData.map((item) => {
+            console.log("array before", hotelRoomArray);
+
             console.log("my item is", item);
             if (item.listingid == 1) {
               hotelDetailsObj.hotelname = item.hotelname;
@@ -803,7 +805,7 @@ const BookingHotel = (props) => {
             hotelRoomObj.numOfRooms = item.numOfRooms;
             console.log("hotel room obj", hotelRoomObj);
             hotelRoomArray.push(hotelRoomObj);
-            console.log("hotel room array in loop", hotelRoomArray);
+            console.log("array after push", hotelRoomArray);
           });
           setHotelRooms(hotelRoomArray);
           // console.log("hotel Rooms are ", hotelRoomArray);
@@ -876,15 +878,44 @@ const BookingHotel = (props) => {
 
       <Container component="main" maxWidth="xm" style={{ paddingTop: "20px" }}>
         <CssBaseline />
-        <div>
-          <p>listing id is {currentListingId}</p>
-
-          {hotelRooms.map((item) => {
-            <div>
-              <p>HOTEL DETAILS</p>
-              <p>{item.roomType}</p>;<p>{item.numOfRooms}</p>;
-            </div>;
-          })}
+        <Typography component="h1" variant="h5">
+          Book your Hotel
+        </Typography>{" "}
+        <div direction="row">
+          {hotelRooms.map((item) => (
+            <Card
+              style={{
+                display: "inline-block",
+                width: "20rem",
+                height: "21rem",
+                margin: "1rem",
+              }}
+            >
+              <CardActionArea>
+                <CardMedia
+                  className={classes.media}
+                  image={hotelimgasset}
+                  title="Hotel Image"
+                />
+                <CardContent>
+                  <div style={{ overflow: "hidden", height: "2rem" }}>
+                    <Typography gutterBottom variant="h6" component="h3">
+                      {item.roomType}
+                    </Typography>
+                  </div>
+                  <div style={{ overflow: "hidden", height: "4rem" }}>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      {item.numOfRooms}
+                    </Typography>
+                  </div>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          ))}
         </div>
       </Container>
     </div>
