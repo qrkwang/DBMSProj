@@ -847,7 +847,7 @@ const Dashboard = (props) => {
               style={{
                 display: "inline-block",
                 width: "20rem",
-                height: "24rem",
+                height: "21rem",
                 margin: "1rem",
               }}
             >
@@ -857,24 +857,28 @@ const Dashboard = (props) => {
                   image={hotelimgasset}
                   title="Hotel Image"
                 />
-                <CardContent style={{ height: "10rem" }}>
-                  <Typography gutterBottom variant="h6" component="h3">
-                    {row.hotelname}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="p"
-                  >
-                    {row.address}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="p"
-                  >
-                    {row.city}
-                  </Typography>
+                <CardContent>
+                  <div style={{ overflow: "hidden", height: "2rem" }}>
+                    <Typography gutterBottom variant="h6" component="h3">
+                      {row.hotelname}
+                    </Typography>
+                  </div>
+                  <div style={{ overflow: "hidden", height: "4rem" }}>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      {row.address}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      {row.city}
+                    </Typography>
+                  </div>
                 </CardContent>
                 <Typography
                   variant="subtitle2"
@@ -898,6 +902,7 @@ const Dashboard = (props) => {
   );
 };
 const Profile = (props) => {};
+
 const MyBookings = (props) => {
   const classes = useStyles();
   let history = useHistory();
