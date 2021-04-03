@@ -10,6 +10,9 @@ import {
   Paper,
   Card,
   CardContent,
+  CardActionArea,
+  CardMedia,
+  CardActions,
 } from "@material-ui/core";
 import HotelOutlinedIcon from "@material-ui/icons/HotelOutlined";
 import Moment from "react-moment";
@@ -37,6 +40,7 @@ import { useForm, Controller } from "react-hook-form";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import ReactDOM from "react-dom";
+import hotelimgasset from "./assets/hotelimgasset.jpg";
 
 //Made axios global
 const axios = require("axios"); //use axios for http requests
@@ -71,6 +75,9 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     textAlign: "left",
     color: theme.palette.text.secondary,
+  },
+  media: {
+    height: 140,
   },
 }));
 
@@ -735,8 +742,42 @@ const Dashboard = (props) => {
   let location = useLocation();
   let receivedUserId = location.state.currentUserId;
 
-  const [currentUserId, setcurrentUserId] = useState(receivedUserId);
+  const [hotelListing, sethotelListing] = useState([]);
+  const [currentUserId, setcurrentUserId] = useState("");
 
+  useEffect(() => {
+    setcurrentUserId(receivedUserId);
+  }, [receivedUserId]);
+
+  //Use this to stop first render from triggering axios request which leads to error
+  const isFirstRun = useRef(true);
+
+  useEffect(() => {
+    //if first render, don't do anything
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+    const url = `/hotel/hotellisting`;
+
+    instance
+      .get(url)
+      .then(function (response) {
+        var responseData = response.data;
+        console.log(typeof responseData);
+        console.log(responseData);
+        if (Array.isArray(responseData)) {
+          console.log("is an array");
+          sethotelListing(responseData);
+        } else {
+          //Not array, was returned some other things.
+          console.log("not an array");
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [currentUserId]);
   return (
     <div>
       {/* Personalized toolbar for each specific page */}
@@ -795,17 +836,68 @@ const Dashboard = (props) => {
         </Toolbar>
       </AppBar>
 
-      <Container component="main" maxWidth="xs" style={{ paddingTop: "20px" }}>
+      <Container component="main" maxWidth="xm" style={{ paddingTop: "20px" }}>
         <CssBaseline />
-        <div className={classes.paper}>
-          <Typography component="h1" variant="h5">
-            Show Hotel listing here {currentUserId}
-          </Typography>
+        <Typography component="h1" variant="h5">
+          Hotels
+        </Typography>{" "}
+        <div direction="row">
+          {hotelListing.map((row) => (
+            <Card
+              style={{
+                display: "inline-block",
+                width: "20rem",
+                height: "24rem",
+                margin: "1rem",
+              }}
+            >
+              <CardActionArea>
+                <CardMedia
+                  className={classes.media}
+                  image={hotelimgasset}
+                  title="Hotel Image"
+                />
+                <CardContent style={{ height: "10rem" }}>
+                  <Typography gutterBottom variant="h6" component="h3">
+                    {row.hotelname}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                  >
+                    {row.address}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                  >
+                    {row.city}
+                  </Typography>
+                </CardContent>
+                <Typography
+                  variant="subtitle2"
+                  color="textPrimary"
+                  component="p"
+                  style={{ alignSelf: "flex-end" }}
+                >
+                  Amenities: {row.amenities}
+                </Typography>
+              </CardActionArea>
+              <CardActions style={{ alignSelf: "flex-end" }}>
+                <Button size="small" color="primary">
+                  Book Now
+                </Button>
+              </CardActions>
+            </Card>
+          ))}
         </div>
       </Container>
     </div>
   );
 };
+const Profile = (props) => {};
 const MyBookings = (props) => {
   const classes = useStyles();
   let history = useHistory();
@@ -934,6 +1026,46 @@ const MyBookings = (props) => {
                   <Grid container spacing={2}>
                     <Grid item xs={5}>
                       <Typography variant="body2" component="p">
+                        Hotel Name
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={7}>
+                      <Typography variant="body2" component="p">
+                        {row.hotelname}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography variant="body2" component="p">
+                        Address
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={7}>
+                      <Typography variant="body2" component="p">
+                        {row.address}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography variant="body2" component="p">
+                        Room Type
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={7}>
+                      <Typography variant="body2" component="p">
+                        {row.roomType}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography variant="body2" component="p">
+                        Guests
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={7}>
+                      <Typography variant="body2" component="p">
+                        {row.numofguest}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography variant="body2" component="p">
                         Check In Date
                       </Typography>
                     </Grid>
@@ -990,6 +1122,9 @@ function App() {
 
         <Route path="/mybookings">
           <MyBookings />
+        </Route>
+        <Route path="/profile">
+          <Profile />
         </Route>
       </Switch>
     </div>
