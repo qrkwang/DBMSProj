@@ -116,7 +116,7 @@ CREATE TABLE `hotelreview` (
   `hotelreviewid` int(11) NOT NULL AUTO_INCREMENT,
   `listingid` int(11) DEFAULT NULL,
   `ratings` int(11) DEFAULT NULL,
-  `reviews` varchar(255) DEFAULT NULL,
+  `reviews` longtext DEFAULT NULL,
   PRIMARY KEY (`hotelreviewid`),
   KEY `listingid` (`listingid`),
   CONSTRAINT `hotelreview_ibfk_1` FOREIGN KEY (`listingid`) REFERENCES `listing` (`listingid`)
