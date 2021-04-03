@@ -38,7 +38,7 @@ import ReactDOM from "react-dom";
 
 //Made axios global
 const axios = require("axios"); //use axios for http requests
-const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axiosfor http requests
+const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axios for http requests
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {

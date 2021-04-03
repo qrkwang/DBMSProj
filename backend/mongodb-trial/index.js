@@ -22,10 +22,7 @@ app.get("/hotel/hotellistingdetailbyid", db.getHotelListingDetailsById);
 app.get("/hotel/hotelreview", db.getHotelReview);
 app.get("/hotel/hotelreviewbyid", db.getHotelReviewById);
 app.get("/hotel/hotellistingwithdetails", db.getHotelListingWithDetails);
-app.get(
-  "/hotel/hotellistingwithdetailsbyid",
-  db.getHotelListingWithDetailsById
-);
+app.get("/hotel/hotellistingwithdetailsbyid", db.getHotelListingWithDetailsById);
 app.get("/booking", db.getBooking);
 app.get("/booking/bookingbyid", db.getBookingById);
 app.post("/user/create", db.createUser);

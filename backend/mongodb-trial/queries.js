@@ -125,8 +125,17 @@ const getHotelListingWithDetails = (request, response) => {
 
     var db = client.db(database)
 
-    //To change to inner join
-    db.collection("hotelreview").find().toArray(function (err, result) {
+    db.collection('listing').aggregate([
+      {
+        $lookup:
+          {
+            from: "hotellistingdetails",
+            localField: "_id",
+            foreignField: "listingid",
+            as: "hotellistingwithdetails"
+          }
+      }
+   ]).toArray(function (err, result) {
       if (err) throw err
 
       response.status(200).json(result)
@@ -139,9 +148,19 @@ const getHotelListingWithDetailsById = (request, response) => {
     if (err) throw err
 
     var db = client.db(database)
+    var listingId = request.body.listingid
 
-    //To change to inner join
-    db.collection("hotelreview").findOne({}).toArray(function (err, result) {
+    db.collection('listing').aggregate([
+      {
+        $lookup:
+          {
+            from: "hotellistingdetails",
+            localField: "_id",
+            foreignField: "listingid",
+            as: "hotellistingwithdetails"
+          }
+      }
+   ]).toArray(function (err, result) {
       if (err) throw err
 
       response.status(200).json(result)
@@ -171,7 +190,6 @@ const getBookingById = (request, response) => {
     var db = client.db(database)
     var bookingId = request.body.bookingId
 
-    //To change to inner join
     db.collection("bookings").findOne({"_id": bookingId}).toArray(function (err, result) {
       if (err) throw err
 
