@@ -186,12 +186,11 @@ const createUser = (request, response) => {
 
     var db = client.db(database)
     var user = {
-      firstName: request.body.firstName,
-      lastName: request.body.lastName,
-      email: request.body.email,
-      password: request.body.password,
-      //address: request.body.address,
-      //contactNo: request.body.contactNo
+      name: request.body.name,
+      address: request.body.address,
+      contactno: request.body.contactno,
+      username: request.body.username,
+      password: request.body.password
     }
 
     db.collection("customer").insertOne(user, function (err, result) {

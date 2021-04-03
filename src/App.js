@@ -300,10 +300,10 @@ const Register = (props) => {
       instance
         .post("/user/create", {
           name: data.name,
-          username: data.email,
-          password: data.password,
           address: data.address,
           contactno: data.contactno,
+          username: data.email,
+          password: data.password,          
         })
         .then(function (response) {
           var responseData = response.data;
