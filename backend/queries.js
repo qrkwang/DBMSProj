@@ -182,7 +182,8 @@ const getBookingById = (request, response) => {
 const getBookingByCustomerId = (request, response) => {
   const id = parseInt(request.params.id);
   connection.query(
-    "SELECT * FROM booking WHERE customerid = " + [id],
+    "SELECT * FROM booking INNER JOIN listing on booking.listingid = listing.listingid WHERE booking.customerid = " +
+      [id],
     (error, results) => {
       if (error) {
         throw error;

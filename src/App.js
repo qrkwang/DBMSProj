@@ -8,6 +8,8 @@ import {
   Button,
   Avatar,
   Paper,
+  Card,
+  CardContent,
 } from "@material-ui/core";
 import HotelOutlinedIcon from "@material-ui/icons/HotelOutlined";
 import Moment from "react-moment";
@@ -108,7 +110,7 @@ const Login = (props) => {
             setModalType("invalid");
             setOpen(true);
           } else {
-            console.log(responseData[0].address);
+            // console.log(responseData[0].address);
             console.log("customerID is ", responseData[0].customerid);
 
             history.push({
@@ -303,7 +305,7 @@ const Register = (props) => {
           address: data.address,
           contactno: data.contactno,
           username: data.email,
-          password: data.password,          
+          password: data.password,
         })
         .then(function (response) {
           var responseData = response.data;
@@ -920,8 +922,40 @@ const MyBookings = (props) => {
           </Typography>
           {myBookingList.map((row) => (
             <div>
-              <p>{row.checkindate}</p>
-              <p>{row.checkoutdate}</p>
+              <Card className={classes.root} style={{ marginBottom: "20px" }}>
+                <CardContent>
+                  <Typography
+                    variant="h5"
+                    component="h2"
+                    style={{ marginBottom: "10px" }}
+                  >
+                    Booking #{row.bookingid}
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={5}>
+                      <Typography variant="body2" component="p">
+                        Check In Date
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={7}>
+                      <Typography variant="body2" component="p">
+                        <Moment format="D MMM YYYY">{row.checkindate}</Moment>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography variant="body2" component="p">
+                        Check Out Date
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={7}>
+                      <Typography variant="body2" component="p">
+                        <Moment format="D MMM YYYY">{row.checkoutdate}</Moment>
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                  {}
+                </CardContent>
+              </Card>
             </div>
           ))}
         </div>
