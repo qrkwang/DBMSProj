@@ -736,6 +736,161 @@ const CheckBooking = () => {
   );
 };
 
+const BookingHotel = (props) => {
+  const classes = useStyles();
+  let location = useLocation();
+  const [currentListingId, setcurrentListingId] = useState("");
+  const [currentUserId, setcurrentUserId] = useState("");
+  const [hotelDetails, setHotelDetails] = useState("");
+  const [hotelRooms, setHotelRooms] = useState([]);
+
+  let receivedUserId = location.state.currentUserId;
+  let receivedlistingId = location.state.currentListingId;
+
+  useEffect(() => {
+    setcurrentListingId(receivedlistingId);
+  }, [receivedlistingId]);
+  useEffect(() => {
+    setcurrentUserId(receivedUserId);
+  }, [receivedUserId]);
+
+  useEffect(() => {
+    console.log("setting", hotelRooms);
+    setHotelRooms(hotelRooms);
+  }, [hotelRooms]);
+
+  //Use this to stop first render from triggering axios request which leads to error
+  const isFirstRun = useRef(true);
+
+  useEffect(() => {
+    //if first render, don't do anything
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+    console.log(currentListingId);
+    const url = `/hotel/hotellistingWithDetail/${currentListingId}`;
+
+    instance
+      .get(url)
+      .then(function (response) {
+        var responseData = response.data;
+        console.log(typeof responseData);
+        console.log(responseData);
+        if (Array.isArray(responseData)) {
+          let hotelDetailsObj = {
+            hotelname: "",
+            address: "",
+            city: "",
+            amenities: "",
+          };
+          let hotelRoomObj = {
+            roomType: "",
+            numOfRooms: "",
+          };
+          let hotelRoomArray = [];
+          console.log("is an array");
+          responseData.map((item) => {
+            console.log("my item is", item);
+            if (item.listingid == 1) {
+              hotelDetailsObj.hotelname = item.hotelname;
+              hotelDetailsObj.address = item.address;
+              hotelDetailsObj.city = item.city;
+              hotelDetailsObj.amenities = item.amenities;
+              setHotelDetails(hotelDetailsObj);
+            }
+            hotelRoomObj.roomType = item.roomType;
+            hotelRoomObj.numOfRooms = item.numOfRooms;
+            console.log("hotel room obj", hotelRoomObj);
+            hotelRoomArray.push(hotelRoomObj);
+            console.log("hotel room array in loop", hotelRoomArray);
+          });
+          setHotelRooms(hotelRoomArray);
+          // console.log("hotel Rooms are ", hotelRoomArray);
+        } else {
+          //Not array, was returned some other things.
+          console.log("not an array");
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [currentListingId]);
+
+  return (
+    <div>
+      <AppBar position="static">
+        <Toolbar>
+          <HotelOutlinedIcon className={classes.icon}></HotelOutlinedIcon>
+          <Typography
+            variant="h6"
+            style={{ paddingLeft: "30px" }}
+            className={classes.title}
+          >
+            <Link
+              to={{
+                pathname: "/dashboard",
+                state: { currentUserId: currentUserId },
+              }}
+              style={{ textDecoration: "none", color: "white" }}
+              color="inherit"
+            >
+              Home
+            </Link>
+          </Typography>
+          <Typography variant="h6" className={classes.title}>
+            <Link
+              to="/profile"
+              style={{
+                textDecoration: "none",
+                color: "white",
+              }}
+              color="inherit"
+            >
+              Profile
+            </Link>
+          </Typography>
+          <Typography variant="h6" className={classes.title}>
+            <Link
+              to={{
+                pathname: "/mybookings",
+                state: { currentUserId: currentUserId },
+              }}
+              style={{ textDecoration: "none", color: "white" }}
+              color="inherit"
+            >
+              My Bookings
+            </Link>
+          </Typography>
+          <Typography variant="h6" className={classes.title}>
+            <Link
+              to="/"
+              style={{ textDecoration: "none", color: "white" }}
+              color="inherit"
+            >
+              Logout
+            </Link>{" "}
+          </Typography>{" "}
+        </Toolbar>
+      </AppBar>
+
+      <Container component="main" maxWidth="xm" style={{ paddingTop: "20px" }}>
+        <CssBaseline />
+        <div>
+          <p>listing id is {currentListingId}</p>
+
+          {hotelRooms.map((item) => {
+            <div>
+              <p>HOTEL DETAILS</p>
+              <p>{item.roomType}</p>;<p>{item.numOfRooms}</p>;
+            </div>;
+          })}
+        </div>
+      </Container>
+    </div>
+  );
+};
+
 const Dashboard = (props) => {
   const classes = useStyles();
   let history = useHistory();
@@ -778,6 +933,18 @@ const Dashboard = (props) => {
         console.log(error);
       });
   }, [currentUserId]);
+
+  const bookHotel = (id) => {
+    console.log("hotel listing id", id);
+    history.push({
+      pathname: "/bookingHotel",
+      state: {
+        currentListingId: id,
+        currentUserId: currentUserId,
+      },
+    });
+  };
+
   return (
     <div>
       {/* Personalized toolbar for each specific page */}
@@ -890,7 +1057,11 @@ const Dashboard = (props) => {
                 </Typography>
               </CardActionArea>
               <CardActions style={{ alignSelf: "flex-end" }}>
-                <Button size="small" color="primary">
+                <Button
+                  size="small"
+                  color="primary"
+                  onClick={() => bookHotel(row.listingid)}
+                >
                   Book Now
                 </Button>
               </CardActions>
@@ -1124,7 +1295,9 @@ function App() {
         <Route path="/dashboard">
           <Dashboard />
         </Route>
-
+        <Route path="/bookinghotel">
+          <BookingHotel />
+        </Route>
         <Route path="/mybookings">
           <MyBookings />
         </Route>
