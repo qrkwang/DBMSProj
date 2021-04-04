@@ -122,7 +122,7 @@ const getHotelListingWithDetails = (request, response) => {
 const getHotelListingWithDetailsById = (request, response) => {
   const id = parseInt(request.params.id);
   connection.query(
-    "SELECT * FROM Listing inner join HotelListingDetails on Listing.listingid = HotelListingDetails.listingid Where listingid = " +
+    "SELECT * FROM Listing inner join HotelListingDetails on Listing.listingid = HotelListingDetails.listingid Where Listing.listingid = " +
       [id],
     (error, results) => {
       if (error) {
