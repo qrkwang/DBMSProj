@@ -248,9 +248,17 @@ const getBookingById = (request, response) => {
         {
           $lookup: {
             from: "customer",
-            localField: "_id",
-            foreignField: "customerid",
-            as: "bookingswithCustomerId",
+            as: "Customer",
+            let: { id: "$customerid" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$_id", "$$id"],
+                  },
+                },
+              },
+            ],
           },
         },
       ])
