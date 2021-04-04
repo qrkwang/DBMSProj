@@ -208,7 +208,7 @@ const getBookingById = (request, response) => {
     var db = client.db(database)
     var bookingId = request.body.bookingId
 
-    db.collection("bookings").findOne({"_id": bookingId}, function (err, result) {
+    db.collection("bookings").findOne({"_id": objectId(bookingId)}, function (err, result) {
       if (err) throw err
 
       response.status(200).json(result)

@@ -918,7 +918,10 @@ const BookingHotel = (props) => {
           </Typography>
           <Typography variant="h6" className={classes.title}>
             <Link
-              to="/profile"
+              to={{
+                pathname: "/profile",
+                state: { currentUserId: currentUserId },
+              }}
               style={{
                 textDecoration: "none",
                 color: "white",
