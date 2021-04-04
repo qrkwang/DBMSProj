@@ -231,18 +231,58 @@ const getBookingById = (request, response) => {
 
     var db = client.db(database);
     var bookingId = request.body.id;
-
-    db.collection("bookings").findOne(
-      { _id: objectId(bookingId) },
-      function (err, result) {
+    bookingId = request.params.id;
+    // .aggregate([
+    //   {
+    //     $lookup: {
+    //       from: "hotellistingdetails",
+    //       localField: "_id",
+    //       foreignField: "listingid",
+    //       as: "hotellistingwithdetails",
+    //     },
+    //   },
+    // ])
+    db.collection("bookings")
+      .aggregate([
+        { $match: { _id: objectId(bookingId) } },
+        {
+          $lookup: {
+            from: "customer",
+            localField: "_id",
+            foreignField: "customerid",
+            as: "bookingswithCustomerId",
+          },
+        },
+      ])
+      .toArray(function (err, result) {
         if (err) throw err;
 
         response.status(200).json(result);
-      }
-    );
+      });
   });
 };
-
+// db.users.aggregate([
+//   { $match: { UserName: "administrator" } },
+//   {
+//     $lookup: {
+//       from: "companies",
+//       as: "Company",
+//       let: { CompanyID: "$CompanyID" },
+//       pipeline: [
+//         {
+//           $match: {
+//             $expr: {
+//               $and: [
+//                 { $eq: ["$CompanyID", "$$CompanyID"] },
+//                 { $eq: ["$CompanyName", "edt5"] },
+//               ],
+//             },
+//           },
+//         },
+//       ],
+//     },
+//   },
+// ]);
 const createUser = (request, response) => {
   MongoClient.connect(MongoDBUrl, function (err, client) {
     if (err) throw err;
