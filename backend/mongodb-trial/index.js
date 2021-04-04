@@ -10,8 +10,11 @@ var corsOptions = {
 
 app.use(cors(corsOptions));
 
-//Parse passed data into request.body
+// parse requests of content-type - application/json
 app.use(bodyParser.json());
+
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/customer/login", db.loginUser);
 app.get("/customer", db.getCustomers);

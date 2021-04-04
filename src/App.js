@@ -533,10 +533,12 @@ const CheckBooking = () => {
     } else {
       const url = `/booking/${input}`;
 
+      // const url = `/hotel/hotellistingwithdetailsbyid`;
       instance
         .get(url)
         .then(function (response) {
           var responseData = response.data;
+          console.log(response);
           console.log(typeof responseData);
           console.log(responseData);
           if (Array.isArray(responseData)) {
