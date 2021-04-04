@@ -1263,7 +1263,10 @@ const Dashboard = (props) => {
           </Typography>
           <Typography variant="h6" className={classes.title}>
             <Link
-              to="/profile"
+              to={{
+                pathname: "/profile",
+                state: { currentUserId: currentUserId },
+              }}
               style={{
                 textDecoration: "none",
                 color: "white",
@@ -1366,7 +1369,173 @@ const Dashboard = (props) => {
     </div>
   );
 };
-const Profile = (props) => {};
+const Profile = (props) => {
+  const classes = useStyles();
+  let history = useHistory();
+  let location = useLocation();
+  let receivedUserId = location.state.currentUserId;
+  const [myProfile, setmyProfile] = useState([]);
+  const [currentUserId, setcurrentUserId] = useState("");
+
+  useEffect(() => {
+    setcurrentUserId(receivedUserId);
+    console.log(receivedUserId);
+  }, [receivedUserId]);
+
+  //Use this to stop first render from triggering axios request which leads to error
+  const isFirstRun = useRef(true);
+
+  useEffect(() => {
+    //if first render, don't do anything
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+    console.log("do fetching here", currentUserId);
+    const url = `/customer/${currentUserId}`;
+    instance
+      .get(url)
+      .then(function (response) {
+        var responseData = response.data;
+        console.log(typeof responseData);
+        console.log(responseData);
+        if (Array.isArray(responseData)) {
+          console.log("is an array");
+          setmyProfile(responseData[0]);
+        } else {
+          //Not array, was returned some other things.
+          console.log("not an array");
+        }
+      })
+      .catch(function (error) {});
+  }, [currentUserId]);
+
+  return (
+    <div>
+      {/* Personalized toolbar for each specific page */}
+      <AppBar position="static">
+        <Toolbar>
+          <HotelOutlinedIcon className={classes.icon}></HotelOutlinedIcon>
+          <Typography
+            variant="h6"
+            style={{ paddingLeft: "30px" }}
+            className={classes.title}
+          >
+            <Link
+              to={{
+                pathname: "/dashboard",
+                state: { currentUserId: currentUserId },
+              }}
+              style={{ textDecoration: "none", color: "white" }}
+              color="inherit"
+            >
+              Home
+            </Link>
+          </Typography>
+          <Typography variant="h6" className={classes.title}>
+            <Link
+              to={{
+                pathname: "/profile",
+                state: { currentUserId: currentUserId },
+              }}
+              style={{
+                textDecoration: "none",
+                color: "white",
+              }}
+              color="inherit"
+            >
+              <div style={{ color: " grey" }}>Profile</div>
+            </Link>
+          </Typography>
+          <Typography variant="h6" className={classes.title}>
+            <Link
+              to={{
+                pathname: "/mybookings",
+                state: { currentUserId: currentUserId },
+              }}
+              style={{ textDecoration: "none", color: "white" }}
+              color="inherit"
+            >
+              My Bookings
+            </Link>
+          </Typography>
+          <Typography variant="h6" className={classes.title}>
+            <Link
+              to="/"
+              style={{ textDecoration: "none", color: "white" }}
+              color="inherit"
+            >
+              Logout
+            </Link>{" "}
+          </Typography>{" "}
+        </Toolbar>
+      </AppBar>
+      <Container component="main" maxWidth="xs" style={{ paddingTop: "20px" }}>
+        <CssBaseline />
+        <div>
+          <Typography
+            component="h1"
+            variant="h5"
+            style={{ marginBottom: "1rem" }}
+          >
+            Profile
+          </Typography>
+          <Card>
+            {/* {myProfile.name}
+            {myProfile.contactNo}
+            {myProfile.address}
+            {myProfile.username}
+            {myProfile.password} */}
+            <CardContent>
+              <Grid container spacing={2}>
+                <Grid item xs={5}>
+                  <Typography variant="body2" component="p">
+                    Name:
+                  </Typography>
+                </Grid>
+                <Grid item xs={7}>
+                  <Typography variant="body2" component="p">
+                    {myProfile.name}
+                  </Typography>
+                </Grid>
+                <Grid item xs={5}>
+                  <Typography variant="body2" component="p">
+                    Contact Number:
+                  </Typography>
+                </Grid>
+                <Grid item xs={7}>
+                  <Typography variant="body2" component="p">
+                    {myProfile.contactNo}
+                  </Typography>
+                </Grid>
+                <Grid item xs={5}>
+                  <Typography variant="body2" component="p">
+                    Address:
+                  </Typography>
+                </Grid>
+                <Grid item xs={7}>
+                  <Typography variant="body2" component="p">
+                    {myProfile.address}
+                  </Typography>
+                </Grid>
+                <Grid item xs={5}>
+                  <Typography variant="body2" component="p">
+                    Username:
+                  </Typography>
+                </Grid>
+                <Grid item xs={7}>
+                  <Typography variant="body2" component="p">
+                    {myProfile.username}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        </div>
+      </Container>
+    </div>
+  );
+};
 
 const MyBookings = (props) => {
   const classes = useStyles();
@@ -1434,7 +1603,10 @@ const MyBookings = (props) => {
           </Typography>
           <Typography variant="h6" className={classes.title}>
             <Link
-              to="/profile"
+              to={{
+                pathname: "/profile",
+                state: { currentUserId: currentUserId },
+              }}
               style={{
                 textDecoration: "none",
                 color: "white",
@@ -1444,11 +1616,7 @@ const MyBookings = (props) => {
               Profile
             </Link>
           </Typography>
-          <Typography
-            href="/checkbooking"
-            variant="h6"
-            className={classes.title}
-          >
+          <Typography variant="h6" className={classes.title}>
             <Link
               to={{
                 pathname: "/mybookings",
@@ -1479,7 +1647,11 @@ const MyBookings = (props) => {
       <Container component="main" maxWidth="xs" style={{ paddingTop: "20px" }}>
         <CssBaseline />
         <div>
-          <Typography component="h1" variant="h5">
+          <Typography
+            component="h1"
+            variant="h5"
+            style={{ marginBottom: "1rem" }}
+          >
             My Bookings
           </Typography>
           {myBookingList.map((row) => (
