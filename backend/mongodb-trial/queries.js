@@ -12,11 +12,15 @@ const loginUser = (request, response) => {
       username: request.body.username,
       password: request.body.password,
     };
+    console.log(request.body.username);
+    console.log(request.body.password);
+
+    console.log(userInfo);
 
     db.collection("customer").findOne(userInfo, function (err, result) {
       if (err) throw err;
 
-      response.status(205).json(result);
+      response.status(200).json(result);
     });
   });
 };
@@ -32,7 +36,7 @@ const getCustomers = (request, response) => {
       .toArray(function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       });
   });
 };
@@ -49,7 +53,7 @@ const getCustomersById = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });
@@ -66,7 +70,7 @@ const getHotelListing = (request, response) => {
       .toArray(function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       });
   });
 };
@@ -83,7 +87,7 @@ const getHotelListingById = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });
@@ -100,7 +104,7 @@ const getHotelListingDetails = (request, response) => {
       .toArray(function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       });
   });
 };
@@ -117,7 +121,7 @@ const getHotelListingDetailsById = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });
@@ -134,7 +138,7 @@ const getHotelReview = (request, response) => {
       .toArray(function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       });
   });
 };
@@ -151,7 +155,7 @@ const getHotelReviewById = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });
@@ -177,7 +181,7 @@ const getHotelListingWithDetails = (request, response) => {
       .toArray(function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       });
   });
 };
@@ -203,7 +207,7 @@ const getHotelListingWithDetailsById = (request, response) => {
       .toArray(function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       });
   });
 };
@@ -220,7 +224,7 @@ const getBooking = (request, response) => {
       .toArray(function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       });
   });
 };
@@ -233,7 +237,8 @@ const getBookingById = (request, response) => {
     bookingId = request.params.id;
     console.log("request is ", request.params.id);
 
-    db.collection("bookings")
+    var json = db
+      .collection("bookings")
       .aggregate([
         { $match: { _id: objectId(bookingId) } },
         {
@@ -250,9 +255,9 @@ const getBookingById = (request, response) => {
       ])
       .toArray(function (err, result) {
         if (err) throw err;
-
+        result.mongo = 1;
         console.log(result);
-        response.status(205).json(result);
+        response.status(200).json(result);
       });
   });
   // .aggregate([
@@ -313,6 +318,7 @@ const getBookingById = (request, response) => {
 //     },
 //   },
 // ]);
+
 const createUser = (request, response) => {
   MongoClient.connect(MongoDBUrl, function (err, client) {
     if (err) throw err;
@@ -329,7 +335,7 @@ const createUser = (request, response) => {
     db.collection("customer").insertOne(user, function (err, result) {
       if (err) throw err;
 
-      response.status(205).json(result);
+      response.status(200).json(result);
     });
   });
 };
@@ -352,7 +358,7 @@ const createBooking = (request, response) => {
     db.collection("bookings").insertOne(booking, function (err, result) {
       if (err) throw err;
 
-      response.status(205).json(result);
+      response.status(200).json(result);
     });
   });
 };
@@ -371,7 +377,7 @@ const createHotelReview = (request, response) => {
     db.collection("hotelreview").insertOne(hotelReview, function (err, result) {
       if (err) throw err;
 
-      response.status(205).json(result);
+      response.status(200).json(result);
     });
   });
 };
@@ -392,7 +398,7 @@ const createListingDetails = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });
@@ -413,7 +419,7 @@ const createListing = (request, response) => {
     db.collection("hotellisting").insertOne(listing, function (err, result) {
       if (err) throw err;
 
-      response.status(205).json(result);
+      response.status(200).json(result);
     });
   });
 };
@@ -439,7 +445,7 @@ const updateUser = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });
@@ -467,7 +473,7 @@ const updateBooking = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });
@@ -492,7 +498,7 @@ const updateHotelReview = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });
@@ -518,7 +524,7 @@ const updateListing = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });
@@ -543,7 +549,7 @@ const updateListingDetails = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });
@@ -561,7 +567,7 @@ const deleteBooking = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });
@@ -579,7 +585,7 @@ const deleteHotelReview = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });
@@ -597,7 +603,7 @@ const deleteListing = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });
@@ -615,7 +621,7 @@ const deleteListingDetails = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });
@@ -633,7 +639,7 @@ const deleteUser = (request, response) => {
       function (err, result) {
         if (err) throw err;
 
-        response.status(205).json(result);
+        response.status(200).json(result);
       }
     );
   });

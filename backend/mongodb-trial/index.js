@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get("/customer/login", db.loginUser);
+app.post("/customer/login", db.loginUser);
 app.get("/customer", db.getCustomers);
 app.get("/customer/customerbyid", db.getCustomersById);
 app.get("/hotel/hotellisting", db.getHotelListing);

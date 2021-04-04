@@ -46,6 +46,7 @@ import hotelroomasset from "./assets/hotelroom.jpg";
 //Made axios global
 const axios = require("axios"); //use axios for http requests
 const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axios for http requests
+const isMongo = 1;
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -112,19 +113,33 @@ const Login = (props) => {
         .then(function (response) {
           var responseData = response.data;
           console.log(typeof responseData);
-
-          if (response.data == false) {
-            console.log("false");
-            setModalType("invalid");
-            setOpen(true);
+          console.log(response);
+          if (isMongo == 1) {
+            console.log(responseData);
+            if (responseData === null) {
+              setModalType("invalid");
+              setOpen(true);
+            } else {
+              console.log("customerID is ", responseData._id);
+              history.push({
+                pathname: "/Dashboard",
+                state: { currentUserId: responseData._id },
+              });
+            }
           } else {
-            // console.log(responseData[0].address);
-            console.log("customerID is ", responseData[0].customerid);
+            if (response.data == false) {
+              console.log("false");
+              setModalType("invalid");
+              setOpen(true);
+            } else {
+              // console.log(responseData[0].address);
+              console.log("customerID is ", responseData[0].customerid);
 
-            history.push({
-              pathname: "/Dashboard",
-              state: { currentUserId: responseData[0].customerid },
-            });
+              history.push({
+                pathname: "/Dashboard",
+                state: { currentUserId: responseData[0].customerid },
+              });
+            }
           }
         })
         .catch(function (error) {
@@ -320,16 +335,27 @@ const Register = (props) => {
           console.log(typeof responseData);
           console.log(response);
           // name, username, password, address, contactno;
-          if (response.data == "Success") {
-            console.log("added");
-            setModalType("added");
-            setOpen(true);
-          } else if (response.data == "isExist") {
-            setModalType("exist");
-            setOpen(true);
-            console.log("account already exists");
+          if (isMongo == 1) {
+            console.log("is Mongo!!");
+            if (typeof responseData === "object") {
+              console.log("added");
+              setModalType("added");
+              setOpen(true);
+            } else {
+              console.log(response);
+            }
           } else {
-            console.log(response);
+            if (response.data == "Success") {
+              console.log("added");
+              setModalType("added");
+              setOpen(true);
+            } else if (response.data == "isExist") {
+              setModalType("exist");
+              setOpen(true);
+              console.log("account already exists");
+            } else {
+              console.log(response);
+            }
           }
         })
         .catch(function (error) {
@@ -541,6 +567,7 @@ const CheckBooking = () => {
           console.log(response);
           console.log(typeof responseData);
           console.log(responseData);
+
           if (Array.isArray(responseData)) {
             if (responseData.length == 0) {
               setModalType("invalid");
@@ -548,7 +575,24 @@ const CheckBooking = () => {
             } else {
               // responseData[0].checkindate = "";
               // responseData[0].checkoutdate = "";
-              setbookingItem(responseData[0]);
+              if (isMongo == 1) {
+                var responseObj = {
+                  _id: responseData[0]._id,
+                  checkindate: responseData[0].checkindate,
+                  checkoutdate: responseData[0].checkoutdate,
+                  numofguest: responseData[0].numofguest,
+                  roomType: responseData[0].roomType,
+                  customerid: responseData[0].customerid,
+                  listingid: responseData[0].listingid,
+                  hotelname: responseData[0].listing.hotelname,
+                  address: responseData[0].listing.address,
+                  city: responseData[0].listing.city,
+                  amenities: responseData[0].listing.amenities,
+                };
+                setbookingItem(responseObj);
+              } else {
+                setbookingItem(responseData[0]);
+              }
               setModalType("found");
               setOpen(true);
             }
