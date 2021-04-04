@@ -1,1 +1,1 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"ca7ed0b88ae74be8840ce9700d7fec19","collectionName":"hotellistingdetails"}
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"d604db1ca9dd4418ae5ad847efb271a3","collectionName":"hotellistingdetails"}
