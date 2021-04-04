@@ -232,6 +232,24 @@ const getBookingById = (request, response) => {
     var db = client.db(database);
     var bookingId = request.body.id;
     bookingId = request.params.id;
+
+    db.collection("bookings")
+      .aggregate([
+        { $match: { bookingid: bookingId } },
+        {
+          $lookup: {
+            from: "hotellisting",
+            localField: "listingid",
+            foreignField: "listingid",
+            as: "bookingswithListingid",
+          },
+        },
+      ])
+      .toArray(function (err, result) {
+        if (err) throw err;
+
+        response.status(200).json(result);
+      });
     // .aggregate([
     //   {
     //     $lookup: {
@@ -242,31 +260,31 @@ const getBookingById = (request, response) => {
     //     },
     //   },
     // ])
-    db.collection("bookings")
-      .aggregate([
-        { $match: { _id: objectId(bookingId) } },
-        {
-          $lookup: {
-            from: "customer",
-            as: "Customer",
-            let: { id: "$customerid" },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $eq: ["$_id", "$$id"],
-                  },
-                },
-              },
-            ],
-          },
-        },
-      ])
-      .toArray(function (err, result) {
-        if (err) throw err;
+    // db.collection("bookings")
+    //   .aggregate([
+    //     { $match: { _id: objectId(bookingId) } },
+    //     {
+    //       $lookup: {
+    //         from: "customer",
+    //         as: "Customer",
+    //         let: { id: "$customerid" },
+    //         pipeline: [
+    //           {
+    //             $match: {
+    //               $expr: {
+    //                 $eq: ["$_id", "$$id"],
+    //               },
+    //             },
+    //           },
+    //         ],
+    //       },
+    //     },
+    //   ])
+    //   .toArray(function (err, result) {
+    //     if (err) throw err;
 
-        response.status(200).json(result);
-      });
+    //     response.status(200).json(result);
+    //   });
   });
 };
 // db.users.aggregate([
@@ -617,6 +635,15 @@ const deleteUser = (request, response) => {
   });
 };
 
+function getSequenceNextValue(seqName) {
+  var seqDoc = db.student.findAndModify({
+    query: { _id: seqName },
+    update: { $inc: { seqValue: 1 } },
+    new: true,
+  });
+
+  return seqDoc.seqValue;
+}
 module.exports = {
   loginUser,
   getCustomers,
