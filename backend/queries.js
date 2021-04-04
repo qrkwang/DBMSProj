@@ -242,7 +242,7 @@ const createListingDetails = (request, response) => {
 };
 const createBooking = (request, response) => {
   const sql =
-    "Insert into booking(checkindate, checkoutdate,numofguest,isCanceled,customerid,roomType) values (?,?,?,?,?,?)";
+    "Insert into booking(checkindate, checkoutdate,numofguest,isCanceled,customerid,roomType, listingid) values (?,?,?,?,?,?,?)";
   connection.query(
     sql,
     [
@@ -252,6 +252,7 @@ const createBooking = (request, response) => {
       request.body.isCanceled,
       request.body.customerid,
       request.body.roomType,
+      request.body.listingid,
     ],
     (error, results, fields) => {
       if (error) {

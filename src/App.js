@@ -744,9 +744,16 @@ const BookingHotel = (props) => {
   const [currentUserId, setcurrentUserId] = useState("");
   const [hotelDetails, setHotelDetails] = useState("");
   const [hotelRooms, setHotelRooms] = useState([]);
+  const [inputRoomType, setInputRoomType] = useState("");
+  const [open, setOpen] = useState(false); //Open or close modal;
+  const [modalType, setModalType] = useState("empty"); //State for modalType to let modal appear as the specific type. (e.g. invalid, error)
 
   let receivedUserId = location.state.currentUserId;
   let receivedlistingId = location.state.currentListingId;
+
+  //Modal Functions
+  const onOpenModal = () => setOpen(true);
+  const onCloseModal = () => setOpen(false);
 
   useEffect(() => {
     setcurrentListingId(receivedlistingId);
@@ -764,6 +771,11 @@ const BookingHotel = (props) => {
     console.log("setting hotel details", hotelDetails);
     setHotelDetails(hotelDetails);
   }, [hotelDetails]);
+
+  useEffect(() => {
+    console.log("setting room type", inputRoomType);
+    setInputRoomType(inputRoomType);
+  }, [inputRoomType]);
 
   //Use this to stop first render from triggering axios request which leads to error
   const isFirstRun = useRef(true);
@@ -826,8 +838,62 @@ const BookingHotel = (props) => {
       });
   }, [currentListingId]);
 
-  const selectRoom = () => {};
-  const confirmBook = () => {};
+  const { register, handleSubmit, errors } = useForm();
+
+  const selectRoom = (roomType) => {
+    console.log("selected roomtype ", roomType);
+    setInputRoomType(roomType);
+  };
+  const confirmBook = (data) => {
+    console.log(data);
+    console.log("confirm book data ", data.hotelname);
+    console.log("confirm book data ", data.hoteladdress);
+    console.log("confirm book data ", data.hotelroomtype);
+    console.log("confirm book data ", data.checkindate);
+    console.log("confirm book data ", data.checkoutdate);
+    console.log("confirm book data ", data.numOfGuest);
+    if (
+      data.hotelname === "" ||
+      data.hoteladdress === "" ||
+      data.hotelroomtype === "" ||
+      data.checkindate === "" ||
+      data.checkoutdate === "" ||
+      data.numOfGuest === ""
+    ) {
+      setOpen(true);
+      setModalType("empty");
+    } else {
+      console.log("fields not empty");
+      instance
+        .post("/booking/create", {
+          checkindate: data.checkindate,
+          checkoutdate: data.checkoutdate,
+          numofguest: data.numOfGuest,
+          isCanceled: 0,
+          customerid: currentUserId,
+          roomType: data.hotelroomtype,
+          listingid: currentListingId,
+        })
+        .then(function (response) {
+          var responseData = response.data;
+          console.log(typeof responseData);
+          console.log(responseData);
+          console.log(response);
+          if (responseData.affectedRows == 1 && responseData.insertId != "") {
+            console.log("created");
+            setModalType("created");
+            setOpen(true);
+          } else {
+            console.log(response);
+          }
+        })
+        .catch(function (error) {
+          setModalType("error");
+          setOpen(true);
+          console.log(error);
+        });
+    }
+  };
 
   return (
     <div>
@@ -969,7 +1035,7 @@ const BookingHotel = (props) => {
                             variant="contained"
                             size="small"
                             color="primary"
-                            onClick={() => selectRoom()}
+                            onClick={() => selectRoom(item.roomType)}
                             // style={{ alignSelf: "center" }}
                           >
                             Choose This
@@ -984,88 +1050,105 @@ const BookingHotel = (props) => {
                 <Typography variant="h5" component="p">
                   Fill in your details
                 </Typography>
-                <TextField
-                  margin="normal"
-                  fullWidth
-                  id="email"
-                  label="Hotel Name"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  value={hotelDetails.hotelname}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                  variant="filled"
-                  style={{ paddingBottom: "20px" }}
-                />
-                <TextField
-                  margin="normal"
-                  fullWidth
-                  id="email"
-                  label="Hotel Address"
-                  value={hotelDetails.address}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                  variant="filled"
-                  style={{ paddingBottom: "20px" }}
-                />
-                <TextField
-                  margin="normal"
-                  fullWidth
-                  id="email"
-                  label="Room Type"
-                  value=""
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                  variant="filled"
-                  style={{ paddingBottom: "20px" }}
-                />
-                <TextField
-                  margin="normal"
-                  fullWidth
-                  type="date"
-                  id="checkindate"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  label="Check In Date"
-                  name="checkindate"
-                  style={{ paddingBottom: "20px" }}
-                />
-                <TextField
-                  margin="normal"
-                  fullWidth
-                  type="date"
-                  id="checkoutdate"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  label="Check Out Date"
-                  name="checkoutdate"
-                  style={{ paddingBottom: "20px" }}
-                />
-                <TextField
-                  margin="normal"
-                  fullWidth
-                  id="email"
-                  label="Number of Guests"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  style={{ paddingBottom: "20px" }}
-                />
-                <Button variant="contained" color="primary">
-                  Primary
-                </Button>{" "}
+                <form
+                  className={useStyles.form}
+                  noValidate
+                  onSubmit={handleSubmit((data) => confirmBook(data))}
+                >
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    inputRef={register}
+                    id="hotelname"
+                    name="hotelname"
+                    label="Hotel Name"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    value={hotelDetails.hotelname}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    variant="filled"
+                    style={{ paddingBottom: "20px" }}
+                  />
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    inputRef={register}
+                    id="hoteladdress"
+                    name="hoteladdress"
+                    label="Hotel Address"
+                    value={hotelDetails.address}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    variant="filled"
+                    style={{ paddingBottom: "20px" }}
+                  />
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    inputRef={register}
+                    id="hotelroomtype"
+                    name="hotelroomtype"
+                    label="Room Type"
+                    value={inputRoomType}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    variant="filled"
+                    style={{ paddingBottom: "20px" }}
+                  />
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    inputRef={register}
+                    type="date"
+                    id="checkindate"
+                    name="checkindate"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    label="Check In Date"
+                    style={{ paddingBottom: "20px" }}
+                  />
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    inputRef={register}
+                    type="date"
+                    id="checkoutdate"
+                    name="checkoutdate"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    label="Check Out Date"
+                    style={{ paddingBottom: "20px" }}
+                  />
+                  <TextField
+                    margin="normal"
+                    type="number"
+                    fullWidth
+                    inputRef={register}
+                    id="numOfGuest"
+                    name="numOfGuest"
+                    label="Number of Guests"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    style={{ paddingBottom: "20px" }}
+                  />
+                  <Button type="submit" variant="contained" color="primary">
+                    Confirm
+                  </Button>
+                </form>
                 {/* checkindate: request.body.checkindate, checkoutdate:
                 request.body.checkoutdate, numofguest: request.body.numofguest,
                 isCanceled: request.body.isCanceled, customerid:
@@ -1074,6 +1157,29 @@ const BookingHotel = (props) => {
             </Grid>
           </CardContent>{" "}
         </Card>
+        <Modal center open={open} onClose={onCloseModal}>
+          {modalType === "invalid" ? (
+            <div>
+              <h2> Invalid</h2>
+              <p>Invalid input, try again or contact the administrator.</p>
+            </div>
+          ) : modalType === "empty" ? (
+            <div>
+              <h2> Empty fields</h2>
+              <p>Please fill in all fields before creating a booking.</p>
+            </div>
+          ) : modalType === "created" ? (
+            <div>
+              <h2> Booking Created!</h2>
+              <p>You will receive an email confirmation in 1-2 days.</p>
+            </div>
+          ) : (
+            <div>
+              <h2> Error fetching</h2>
+              <p>Please contact the administrator.</p>
+            </div>
+          )}
+        </Modal>
       </Container>
     </div>
   );
