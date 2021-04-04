@@ -191,7 +191,7 @@ const getHotelListingWithDetailsById = (request, response) => {
     if (err) throw err;
 
     var db = client.db(database);
-    var listingId = request.body.listingid;
+    var listingId = request.params.id;
 
     db.collection("listing")
       .aggregate([
@@ -345,14 +345,17 @@ const createBooking = (request, response) => {
     if (err) throw err;
 
     var db = client.db(database);
+    console.log(request.body.customerid);
+    console.log(request.body.listingid);
+
     var booking = {
       checkindate: request.body.checkindate,
       checkoutdate: request.body.checkoutdate,
       numofguest: request.body.numofguest,
       isCanceled: request.body.isCanceled,
-      customerid: request.body.customerId,
+      customerid: objectId(request.body.customerid),
       roomType: request.body.roomType,
-      listingid: request.body.listingId,
+      listingid: objectId(request.body.listingid),
     };
 
     db.collection("bookings").insertOne(booking, function (err, result) {

@@ -25,17 +25,14 @@ app.get("/hotel/hotellistingdetail", db.getHotelListingDetails);
 app.get("/hotel/hotellistingdetailbyid", db.getHotelListingDetailsById);
 app.get("/hotel/hotelreview", db.getHotelReview);
 app.get("/hotel/hotelreviewbyid", db.getHotelReviewById);
-app.get("/hotel/hotellistingwithdetails", db.getHotelListingWithDetails);
-app.get(
-  "/hotel/hotellistingwithdetailsbyid",
-  db.getHotelListingWithDetailsById
-);
+app.get("/hotel/hotellistingWithDetail", db.getHotelListingWithDetails);
+app.get("/hotel/hotellistingWithDetail/:id", db.getHotelListingWithDetailsById);
 app.get("/booking", db.getBooking);
 app.get("/booking/:id", db.getBookingById);
 app.get("/booking/customer/:id", db.getBookingByCustomerId);
 
 app.post("/user/create", db.createUser);
-app.post("/booking/createbooking", db.createBooking);
+app.post("/booking/create", db.createBooking);
 app.post("/hotel/createhotelreview", db.createHotelReview);
 app.post("/hotel/createlistingdetails", db.createListingDetails);
 app.post("/hotel/createlisting", db.createListing);

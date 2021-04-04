@@ -42,6 +42,7 @@ import { Modal } from "react-responsive-modal";
 import ReactDOM from "react-dom";
 import hotelimgasset from "./assets/hotelimgasset.jpg";
 import hotelroomasset from "./assets/hotelroom.jpg";
+import { ContactSupportOutlined } from "@material-ui/icons";
 
 //Made axios global
 const axios = require("axios"); //use axios for http requests
@@ -785,6 +786,7 @@ const CheckBooking = () => {
 
 const BookingHotel = (props) => {
   const classes = useStyles();
+  let history = useHistory();
   let location = useLocation();
   const [currentListingId, setcurrentListingId] = useState("");
   const [currentUserId, setcurrentUserId] = useState("");
@@ -799,12 +801,23 @@ const BookingHotel = (props) => {
 
   //Modal Functions
   const onOpenModal = () => setOpen(true);
-  const onCloseModal = () => setOpen(false);
+  const onCloseModal = () => {
+    history.push({
+      pathname: "/dashboard",
+      state: {
+        currentUserId: currentUserId,
+      },
+    });
+    setOpen(false);
+  };
 
   useEffect(() => {
+    console.log("booking hotel listing id", receivedlistingId);
+
     setcurrentListingId(receivedlistingId);
   }, [receivedlistingId]);
   useEffect(() => {
+    console.log("booking hotel user id", receivedUserId);
     setcurrentUserId(receivedUserId);
   }, [receivedUserId]);
 
@@ -832,7 +845,7 @@ const BookingHotel = (props) => {
       isFirstRun.current = false;
       return;
     }
-    console.log(currentListingId);
+    console.log("current listing iddddd", currentListingId);
     const url = `/hotel/hotellistingWithDetail/${currentListingId}`;
 
     instance
@@ -844,34 +857,54 @@ const BookingHotel = (props) => {
         if (Array.isArray(responseData)) {
           var hotelRoomArray = [];
           console.log("is an array", hotelRoomArray);
-          responseData.map((item) => {
-            let hotelRoomObj = {
-              roomType: "",
-              numOfRooms: "",
+          if (isMongo == 1) {
+            let hotelDetailsObj = {
+              hotelname: responseData[0].hotelname,
+              address: responseData[0].address,
+              city: responseData[0].city,
+              amenities: responseData[0].amenities,
             };
-            console.log("array before", hotelRoomArray);
-
-            console.log("my item is", item);
-            if (item.listingid == 1) {
-              let hotelDetailsObj = {
-                hotelname: "",
-                address: "",
-                city: "",
-                amenities: "",
-              };
-
-              hotelDetailsObj.hotelname = item.hotelname;
-              hotelDetailsObj.address = item.address;
-              hotelDetailsObj.city = item.city;
-              hotelDetailsObj.amenities = item.amenities;
-              setHotelDetails(hotelDetailsObj);
-            }
-            hotelRoomObj.roomType = item.roomType;
-            hotelRoomObj.numOfRooms = item.numOfRooms;
-            console.log("hotel room obj", hotelRoomObj);
-            hotelRoomArray.push(hotelRoomObj);
+            setHotelDetails(hotelDetailsObj);
+            responseData[0].hotellistingwithdetails.map((item) => {
+              var hotelRoomObj = {};
+              hotelRoomObj.roomType = item.roomType;
+              hotelRoomObj.numOfRooms = item.numOfRooms;
+              console.log("hotel room obj", hotelRoomObj);
+              hotelRoomArray.push(hotelRoomObj);
+            });
             console.log("array after push", hotelRoomArray);
-          });
+
+            setHotelRooms(hotelRoomArray);
+          } else {
+            responseData.map((item) => {
+              let hotelRoomObj = {
+                roomType: "",
+                numOfRooms: "",
+              };
+              console.log("array before", hotelRoomArray);
+
+              console.log("my item is", item);
+              if (item.listingid == 1) {
+                let hotelDetailsObj = {
+                  hotelname: "",
+                  address: "",
+                  city: "",
+                  amenities: "",
+                };
+
+                hotelDetailsObj.hotelname = item.hotelname;
+                hotelDetailsObj.address = item.address;
+                hotelDetailsObj.city = item.city;
+                hotelDetailsObj.amenities = item.amenities;
+                setHotelDetails(hotelDetailsObj);
+              }
+              hotelRoomObj.roomType = item.roomType;
+              hotelRoomObj.numOfRooms = item.numOfRooms;
+              console.log("hotel room obj", hotelRoomObj);
+              hotelRoomArray.push(hotelRoomObj);
+              console.log("array after push", hotelRoomArray);
+            });
+          }
           setHotelRooms(hotelRoomArray);
           // console.log("hotel Rooms are ", hotelRoomArray);
         } else {
@@ -898,6 +931,9 @@ const BookingHotel = (props) => {
     console.log("confirm book data ", data.checkindate);
     console.log("confirm book data ", data.checkoutdate);
     console.log("confirm book data ", data.numOfGuest);
+    console.log("user id ", currentUserId);
+    console.log("listing id ", currentListingId);
+
     if (
       data.hotelname === "" ||
       data.hoteladdress === "" ||
@@ -925,12 +961,22 @@ const BookingHotel = (props) => {
           console.log(typeof responseData);
           console.log(responseData);
           console.log(response);
-          if (responseData.affectedRows == 1 && responseData.insertId != "") {
-            console.log("created");
-            setModalType("created");
-            setOpen(true);
+          if (isMongo == 1) {
+            if (responseData.insertedCount == 1) {
+              console.log("created");
+              setModalType("created");
+              setOpen(true);
+            } else {
+              console.log(response);
+            }
           } else {
-            console.log(response);
+            if (responseData.affectedRows == 1 && responseData.insertId != "") {
+              console.log("created");
+              setModalType("created");
+              setOpen(true);
+            } else {
+              console.log(response);
+            }
           }
         })
         .catch(function (error) {
@@ -1244,6 +1290,7 @@ const Dashboard = (props) => {
   const [currentUserId, setcurrentUserId] = useState("");
 
   useEffect(() => {
+    console.log("setting dashbaord user id", receivedUserId);
     setcurrentUserId(receivedUserId);
   }, [receivedUserId]);
 
@@ -1264,12 +1311,21 @@ const Dashboard = (props) => {
         var responseData = response.data;
         console.log(typeof responseData);
         console.log(responseData);
-        if (Array.isArray(responseData)) {
-          console.log("is an array");
-          sethotelListing(responseData);
+        if (isMongo == 1) {
+          if (Array.isArray(responseData)) {
+            responseData.map((item) => {
+              item.listingid = item._id;
+            });
+            sethotelListing(responseData);
+          }
         } else {
-          //Not array, was returned some other things.
-          console.log("not an array");
+          if (Array.isArray(responseData)) {
+            console.log("is an array");
+            sethotelListing(responseData);
+          } else {
+            //Not array, was returned some other things.
+            console.log("not an array");
+          }
         }
       })
       .catch(function (error) {
