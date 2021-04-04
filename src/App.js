@@ -41,6 +41,7 @@ import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import ReactDOM from "react-dom";
 import hotelimgasset from "./assets/hotelimgasset.jpg";
+import hotelroomasset from "./assets/hotelroom.jpg";
 
 //Made axios global
 const axios = require("axios"); //use axios for http requests
@@ -759,6 +760,11 @@ const BookingHotel = (props) => {
     setHotelRooms(hotelRooms);
   }, [hotelRooms]);
 
+  useEffect(() => {
+    console.log("setting hotel details", hotelDetails);
+    setHotelDetails(hotelDetails);
+  }, [hotelDetails]);
+
   //Use this to stop first render from triggering axios request which leads to error
   const isFirstRun = useRef(true);
 
@@ -778,23 +784,24 @@ const BookingHotel = (props) => {
         console.log(typeof responseData);
         console.log(responseData);
         if (Array.isArray(responseData)) {
-          let hotelDetailsObj = {
-            hotelname: "",
-            address: "",
-            city: "",
-            amenities: "",
-          };
-          let hotelRoomObj = {
-            roomType: "",
-            numOfRooms: "",
-          };
           var hotelRoomArray = [];
           console.log("is an array", hotelRoomArray);
           responseData.map((item) => {
+            let hotelRoomObj = {
+              roomType: "",
+              numOfRooms: "",
+            };
             console.log("array before", hotelRoomArray);
 
             console.log("my item is", item);
             if (item.listingid == 1) {
+              let hotelDetailsObj = {
+                hotelname: "",
+                address: "",
+                city: "",
+                amenities: "",
+              };
+
               hotelDetailsObj.hotelname = item.hotelname;
               hotelDetailsObj.address = item.address;
               hotelDetailsObj.city = item.city;
@@ -818,6 +825,9 @@ const BookingHotel = (props) => {
         console.log(error);
       });
   }, [currentListingId]);
+
+  const selectRoom = () => {};
+  const confirmBook = () => {};
 
   return (
     <div>
@@ -879,44 +889,191 @@ const BookingHotel = (props) => {
       <Container component="main" maxWidth="xm" style={{ paddingTop: "20px" }}>
         <CssBaseline />
         <Typography component="h1" variant="h5">
-          Book your Hotel
+          Booking Page
         </Typography>{" "}
-        <div direction="row">
-          {hotelRooms.map((item) => (
-            <Card
-              style={{
-                display: "inline-block",
-                width: "20rem",
-                height: "21rem",
-                margin: "1rem",
-              }}
-            >
-              <CardActionArea>
-                <CardMedia
-                  className={classes.media}
-                  image={hotelimgasset}
-                  title="Hotel Image"
-                />
-                <CardContent>
-                  <div style={{ overflow: "hidden", height: "2rem" }}>
-                    <Typography gutterBottom variant="h6" component="h3">
-                      {item.roomType}
-                    </Typography>
-                  </div>
-                  <div style={{ overflow: "hidden", height: "4rem" }}>
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      component="p"
+        <Card>
+          <CardMedia
+            className={classes.media}
+            image={hotelimgasset}
+            title="Hotel Image"
+          />
+          <CardContent>
+            <Grid container spacing={2}>
+              <Grid item xs={5}>
+                <Typography variant="h5" component="p">
+                  Choose Your Rooms
+                </Typography>
+                <div direction="row">
+                  {hotelRooms.map((item) => (
+                    <Card
+                      style={{
+                        display: "inline-block",
+                        width: "20rem",
+                        height: "20rem",
+                        margin: "1rem",
+                      }}
                     >
-                      {item.numOfRooms}
-                    </Typography>
-                  </div>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          ))}
-        </div>
+                      <CardActionArea>
+                        <CardMedia
+                          className={classes.media}
+                          image={hotelroomasset}
+                          title="Hotel Image"
+                        />
+                        <CardContent>
+                          <div style={{ overflow: "hidden", height: "2rem" }}>
+                            <Typography
+                              gutterBottom
+                              variant="h6"
+                              component="h3"
+                            >
+                              {item.roomType}
+                            </Typography>
+                          </div>
+                          {/* <div style={{ overflow: "hidden", height: "4rem" }}>
+                            <Typography
+                              variant="body2"
+                              color="textSecondary"
+                              component="p"
+                            >
+                              {item.numOfRooms}
+                            </Typography>
+                          </div> */}
+                          <div
+                            style={{
+                              height: "4rem",
+                              alignSelf: "flex-end",
+                              paddingTop: "10px",
+                            }}
+                          >
+                            <Typography
+                              variant="body2"
+                              color="textPrimary"
+                              component="p"
+                            >
+                              Amenities
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              color="textSecondary"
+                              component="p"
+                            >
+                              Air Conditioning, Room Service, Television ,
+                              Coffee/Tea Maker
+                            </Typography>
+                          </div>
+                        </CardContent>
+                      </CardActionArea>
+                      <CardActions style={{}}>
+                        <div style={{ alignItems: "" }}>
+                          <Button
+                            variant="contained"
+                            size="small"
+                            color="primary"
+                            onClick={() => selectRoom()}
+                            // style={{ alignSelf: "center" }}
+                          >
+                            Choose This
+                          </Button>
+                        </div>
+                      </CardActions>
+                    </Card>
+                  ))}
+                </div>
+              </Grid>
+              <Grid item xs={7}>
+                <Typography variant="h5" component="p">
+                  Fill in your details
+                </Typography>
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  id="email"
+                  label="Hotel Name"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  value={hotelDetails.hotelname}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="filled"
+                  style={{ paddingBottom: "20px" }}
+                />
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  id="email"
+                  label="Hotel Address"
+                  value={hotelDetails.address}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="filled"
+                  style={{ paddingBottom: "20px" }}
+                />
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  id="email"
+                  label="Room Type"
+                  value=""
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  variant="filled"
+                  style={{ paddingBottom: "20px" }}
+                />
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  type="date"
+                  id="checkindate"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  label="Check In Date"
+                  name="checkindate"
+                  style={{ paddingBottom: "20px" }}
+                />
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  type="date"
+                  id="checkoutdate"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  label="Check Out Date"
+                  name="checkoutdate"
+                  style={{ paddingBottom: "20px" }}
+                />
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  id="email"
+                  label="Number of Guests"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  style={{ paddingBottom: "20px" }}
+                />
+                <Button variant="contained" color="primary">
+                  Primary
+                </Button>{" "}
+                {/* checkindate: request.body.checkindate, checkoutdate:
+                request.body.checkoutdate, numofguest: request.body.numofguest,
+                isCanceled: request.body.isCanceled, customerid:
+                request.body.customerId, roomType: request.body.roomType */}
+              </Grid>
+            </Grid>
+          </CardContent>{" "}
+        </Card>
       </Container>
     </div>
   );
