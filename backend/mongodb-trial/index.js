@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post("/customer/login", db.loginUser);
 app.get("/customer", db.getCustomers);
-app.get("/customer/customerbyid", db.getCustomersById);
+app.get("/customer/:id", db.getCustomersById);
 app.get("/hotel/hotellisting", db.getHotelListing);
 app.get("hotel/hotellistingbyid", db.getHotelListingById);
 app.get("/hotel/hotellistingdetail", db.getHotelListingDetails);
@@ -32,6 +32,8 @@ app.get(
 );
 app.get("/booking", db.getBooking);
 app.get("/booking/:id", db.getBookingById);
+app.get("/booking/customer/:id", db.getBookingByCustomerId);
+
 app.post("/user/create", db.createUser);
 app.post("/booking/createbooking", db.createBooking);
 app.post("/hotel/createhotelreview", db.createHotelReview);

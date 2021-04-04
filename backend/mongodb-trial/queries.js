@@ -46,7 +46,7 @@ const getCustomersById = (request, response) => {
     if (err) throw err;
 
     var db = client.db(database);
-    var customerId = request.body.id;
+    var customerId = request.params.id;
 
     db.collection("customer").findOne(
       { _id: objectId(customerId) },
@@ -645,6 +645,45 @@ const deleteUser = (request, response) => {
   });
 };
 
+const getBookingByCustomerId = (request, response) => {
+  MongoClient.connect(MongoDBUrl, function (err, client) {
+    if (err) throw err;
+
+    var db = client.db(database);
+    var customerId = request.params.id;
+    console.log("input", customerId);
+    console.log("input", objectId(customerId));
+
+    db.collection("bookings")
+      .aggregate([
+        { $match: { customerid: objectId(customerId) } },
+        {
+          $lookup: {
+            from: "listing",
+            localField: "listingid",
+            foreignField: "_id",
+            as: "listing",
+          },
+        },
+        {
+          $unwind: "$listing",
+        },
+      ])
+      .toArray(function (err, result) {
+        if (err) throw err;
+        response.status(200).json(result);
+      });
+
+    // db.collection("bookings")
+    //   .find({ customerid: objectId(customerId) })
+    //   .toArray(function (err, result) {
+    //     if (err) throw err;
+
+    //     response.status(200).json(result);
+    //   });
+  });
+};
+
 module.exports = {
   loginUser,
   getCustomers,
@@ -657,6 +696,7 @@ module.exports = {
   getHotelReviewById,
   getHotelListingWithDetails,
   getHotelListingWithDetailsById,
+  getBookingByCustomerId,
   getBooking,
   getBookingById,
   createUser,

@@ -1448,12 +1448,18 @@ const Profile = (props) => {
         var responseData = response.data;
         console.log(typeof responseData);
         console.log(responseData);
-        if (Array.isArray(responseData)) {
-          console.log("is an array");
-          setmyProfile(responseData[0]);
+        if (isMongo == 1) {
+          responseData.id = responseData._id;
+          responseData.contactNo = responseData.contactNo;
+          setmyProfile(responseData);
         } else {
-          //Not array, was returned some other things.
-          console.log("not an array");
+          if (Array.isArray(responseData)) {
+            console.log("is an array");
+            setmyProfile(responseData[0]);
+          } else {
+            //Not array, was returned some other things.
+            console.log("not an array");
+          }
         }
       })
       .catch(function (error) {});
@@ -1599,6 +1605,11 @@ const MyBookings = (props) => {
     console.log(receivedUserId);
   }, [receivedUserId]);
 
+  useEffect(() => {
+    console.log("setting list", myBookingList);
+
+    setmyBookingList(myBookingList);
+  }, [myBookingList]);
   //Use this to stop first render from triggering axios request which leads to error
   const isFirstRun = useRef(true);
 
@@ -1617,12 +1628,46 @@ const MyBookings = (props) => {
         var responseData = response.data;
         console.log(typeof responseData);
         console.log(responseData);
-        if (Array.isArray(responseData)) {
-          console.log("is an array");
-          setmyBookingList(responseData);
+
+        if (isMongo == 1) {
+          // _id: responseData[0]._id,
+          // checkindate: responseData[0].checkindate,
+          // checkoutdate: responseData[0].checkoutdate,
+          // numofguest: responseData[0].numofguest,
+          // roomType: responseData[0].roomType,
+          // customerid: responseData[0].customerid,
+          // listingid: responseData[0].listingid,
+          // hotelname: responseData[0].listing.hotelname,
+          // address: responseData[0].listing.address,
+          // city: responseData[0].listing.city,
+          // amenities: responseData[0].listing.amenities,
+          var list = [];
+          responseData.map((item) => {
+            var myBookingObj = {
+              checkindate: item.checkindate,
+              checkoutdate: item.checkoutdate,
+              customerid: item.customerid,
+              roomType: item.roomType,
+              numofguest: item.numofguest,
+              listingid: item.listingid,
+              hotelname: item.listing.hotelname,
+              address: item.listing.address,
+              city: item.listing.city,
+              amenities: item.listing.amenities,
+            };
+            console.log("object is", myBookingObj);
+            list.push(myBookingObj);
+          });
+          console.log(list);
+          setmyBookingList(list);
         } else {
-          //Not array, was returned some other things.
-          console.log("not an array");
+          if (Array.isArray(responseData)) {
+            console.log("is an array");
+            setmyBookingList(responseData);
+          } else {
+            //Not array, was returned some other things.
+            console.log("not an array");
+          }
         }
       })
       .catch(function (error) {});
