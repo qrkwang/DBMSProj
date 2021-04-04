@@ -13,6 +13,7 @@ app.use(cors(corsOptions));
 //Parse passed data into request.body
 app.use(bodyParser.json());
 
+app.get("/customer/login", db.loginUser);
 app.get("/customer", db.getCustomers);
 app.get("/customer/customerbyid", db.getCustomersById);
 app.get("/hotel/hotellisting", db.getHotelListing);

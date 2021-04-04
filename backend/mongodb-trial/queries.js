@@ -3,6 +3,24 @@ const MongoDBUrl = 'mongodb://localhost:27017/MongoDB'
 const database = 'MongoDB'
 var objectId = require('mongodb').ObjectID
 
+const loginUser = (request, response) => {
+  MongoClient.connect(MongoDBUrl, function (err, client) {
+    if (err) throw err
+
+    var db = client.db(database)
+    var userInfo = {
+      username = request.body.username,
+      password = request.body.password
+    }
+
+    db.collection("customer").findOne(userInfo, function (err, result) {
+      if (err) throw err
+
+      response.status(200).json(result)
+    })
+  })
+}
+
 const getCustomers = (request, response) => {
   MongoClient.connect(MongoDBUrl, function (err, client) {
     if (err) throw err
@@ -190,7 +208,7 @@ const getBookingById = (request, response) => {
     var db = client.db(database)
     var bookingId = request.body.bookingId
 
-    db.collection("bookings").findOne({"_id": bookingId}).toArray(function (err, result) {
+    db.collection("bookings").findOne({"_id": bookingId}, function (err, result) {
       if (err) throw err
 
       response.status(200).json(result)
@@ -230,7 +248,8 @@ const createBooking = (request, response) => {
       numofguest: request.body.numofguest,
       isCanceled: request.body.isCanceled,
       customerid: request.body.customerId,
-      roomType: request.body.roomType
+      roomType: request.body.roomType,
+      listingid: request.body.listingId
     }
 
     db.collection("bookings").insertOne(booking, function (err, result) {
@@ -486,6 +505,7 @@ const deleteUser = (request, response) => {
 }
 
 module.exports = {
+  loginUser,
   getCustomers,
   getCustomersById,
   getHotelListing,
