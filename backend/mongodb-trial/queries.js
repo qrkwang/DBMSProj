@@ -230,7 +230,7 @@ const getBookingById = (request, response) => {
     if (err) throw err;
 
     var db = client.db(database);
-    var bookingId = request.body.bookingId;
+    var bookingId = request.body.id;
 
     db.collection("bookings").findOne(
       { _id: objectId(bookingId) },
