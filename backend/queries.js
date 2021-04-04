@@ -1,3 +1,4 @@
+var crypto = require('crypto');
 var mysql = require("mysql");
 function initializeConnection(config) {
   function addDisconnectHandler(connection) {
@@ -28,10 +29,11 @@ var connection = initializeConnection({
   password: "teamDB",
 });
 const loginUser = (request, response) => {
+var hashpass = crypto.createHash('md5').update(request.body.password).digest('hex');
   const sql = "Select * from customer where username = ? and password = ?";
   connection.query(
     sql,
-    [request.body.username, request.body.password],
+    [request.body.username, hashpass],
     (error, results, fields) => {
       if (results.length > 0) {
         if (results) {
@@ -264,6 +266,7 @@ const createBooking = (request, response) => {
 };
 
 const createUser = (request, response) => {
+var hashpass = crypto.createHash('md5').update(request.body.password).digest('hex');
   const sql = "Select * from customer where username = ?";
   connection.query(sql, [request.body.username], (error, results, fields) => {
     if (results.length == 0) {
@@ -274,7 +277,7 @@ const createUser = (request, response) => {
         [
           request.body.name,
           request.body.username,
-          request.body.password,
+          hashpass,
           request.body.address,
           request.body.contactno,
         ],
