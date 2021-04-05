@@ -1,5 +1,7 @@
-var crypto = require('crypto');
+var crypto = require("crypto");
 var mysql = require("mysql");
+const { performance } = require("perf_hooks");
+
 function initializeConnection(config) {
   function addDisconnectHandler(connection) {
     connection.on("error", function (error) {
@@ -29,7 +31,10 @@ var connection = initializeConnection({
   password: "teamDB",
 });
 const loginUser = (request, response) => {
-var hashpass = crypto.createHash('md5').update(request.body.password).digest('hex');
+  var hashpass = crypto
+    .createHash("md5")
+    .update(request.body.password)
+    .digest("hex");
   const sql = "Select * from customer where username = ? and password = ?";
   connection.query(
     sql,
@@ -243,7 +248,7 @@ const createListingDetails = (request, response) => {
   );
 };
 const createBooking = (request, response) => {
-  var start = performance.now()
+  var start = performance.now();
   const sql =
     "Insert into booking(checkindate, checkoutdate,numofguest,isCanceled,customerid,roomType, listingid) values (?,?,?,?,?,?,?)";
   connection.query(
@@ -258,8 +263,8 @@ const createBooking = (request, response) => {
       request.body.listingid,
     ],
     (error, results, fields) => {
-      var end = performance.now()
-      console.log("Time used: " + (end-start))
+      var end = performance.now();
+      console.log("Time used: " + (end - start));
       if (error) {
         throw error;
       }
@@ -269,7 +274,10 @@ const createBooking = (request, response) => {
 };
 
 const createUser = (request, response) => {
-var hashpass = crypto.createHash('md5').update(request.body.password).digest('hex');
+  var hashpass = crypto
+    .createHash("md5")
+    .update(request.body.password)
+    .digest("hex");
   const sql = "Select * from customer where username = ?";
   connection.query(sql, [request.body.username], (error, results, fields) => {
     if (results.length == 0) {

@@ -47,7 +47,7 @@ import { ContactSupportOutlined } from "@material-ui/icons";
 //Made axios global
 const axios = require("axios"); //use axios for http requests
 const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axios for http requests
-const isMongo = 1;
+const isMongo = 0;
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
