@@ -31,15 +31,20 @@ var connection = initializeConnection({
   password: "teamDB",
 });
 const loginUser = (request, response) => {
+  var start = performance.now();
   var hashpass = crypto
     .createHash("md5")
     .update(request.body.password)
     .digest("hex");
+
   const sql = "Select * from customer where username = ? and password = ?";
   connection.query(
     sql,
     [request.body.username, hashpass],
     (error, results, fields) => {
+      var end = performance.now();
+      console.log("Time elapsed for login via SQL: " + (end - start));
+
       if (results.length > 0) {
         if (results) {
           response.status(200).json(results);
@@ -51,7 +56,10 @@ const loginUser = (request, response) => {
   );
 };
 const getCustomers = (request, response) => {
+  var start = performance.now();
   connection.query("SELECT * FROM customer", (error, results) => {
+    var end = performance.now();
+    console.log("Time elapsed to retrieve All Customer Data via SQL: " + (end - start));
     if (error) {
       throw error;
     }
@@ -61,10 +69,14 @@ const getCustomers = (request, response) => {
 };
 
 const getCustomerById = (request, response) => {
+  var start = performance.now();
   const id = parseInt(request.params.id);
   connection.query(
     "SELECT * FROM customer WHERE customerid = " + [id],
     (error, results) => {
+      var end = performance.now();
+      console.log("Time elapsed to retrieve specific customer Data via SQL: " + (end - start));
+   
       if (error) {
         throw error;
       }
@@ -73,7 +85,11 @@ const getCustomerById = (request, response) => {
   );
 };
 const getHotelListing = (request, response) => {
+  var start = performance.now();
   connection.query("SELECT * FROM Listing", (error, results) => {
+    var end = performance.now();
+    console.log("Time elapsed to retrieve All Listing Data via SQL: " + (end - start));
+ 
     if (error) {
       throw error;
     }
@@ -82,10 +98,16 @@ const getHotelListing = (request, response) => {
   });
 };
 const getHotelListingById = (request, response) => {
+
+  var start = performance.now();
   const id = parseInt(request.params.id);
   connection.query(
     "SELECT * FROM Listing WHERE listingid = " + [id],
+
     (error, results) => {
+      var end = performance.now();
+    console.log("Time elapsed to retrieve specific Listing Data via SQL: " + (end - start));
+ 
       if (error) {
         throw error;
       }
@@ -94,7 +116,11 @@ const getHotelListingById = (request, response) => {
   );
 };
 const getHotelListingDetails = (request, response) => {
+  var start = performance.now();
   connection.query("SELECT * FROM HotelListingDetails", (error, results) => {
+    var end = performance.now();
+    console.log("Time elapsed to retrieve All Listing Details Data via SQL: " + (end - start));
+
     if (error) {
       throw error;
     }
@@ -103,10 +129,14 @@ const getHotelListingDetails = (request, response) => {
   });
 };
 const getHotelListingDetailsById = (request, response) => {
+  var start = performance.now();
   const id = parseInt(request.params.id);
   connection.query(
     "SELECT * FROM HotelListingDetails WHERE listingdetailid = " + [id],
     (error, results) => {
+      var end = performance.now();
+      console.log("Time elapsed to retrieve specific Listing Details Data via SQL: " + (end - start));
+  
       if (error) {
         throw error;
       }
@@ -115,9 +145,13 @@ const getHotelListingDetailsById = (request, response) => {
   );
 };
 const getHotelListingWithDetails = (request, response) => {
+  var start = performance.now();
   connection.query(
     "SELECT * FROM Listing inner join HotelListingDetails on Listing.listingid = HotelListingDetails.listingid",
     (error, results) => {
+      var end = performance.now();
+      console.log("Time elapsed to retrieve All Listing with its Details Data via SQL: " + (end - start));
+  
       if (error) {
         throw error;
       }
@@ -127,11 +161,15 @@ const getHotelListingWithDetails = (request, response) => {
   );
 };
 const getHotelListingWithDetailsById = (request, response) => {
+  var start = performance.now();
   const id = parseInt(request.params.id);
   connection.query(
     "SELECT * FROM Listing inner join HotelListingDetails on Listing.listingid = HotelListingDetails.listingid Where Listing.listingid = " +
       [id],
     (error, results) => {
+      var end = performance.now();
+      console.log("Time elapsed to retrieve specific Listing with its Details Data via SQL: " + (end - start));
+  
       if (error) {
         throw error;
       }
@@ -140,7 +178,11 @@ const getHotelListingWithDetailsById = (request, response) => {
   );
 };
 const getHotelReview = (request, response) => {
+  var start = performance.now();
   connection.query("SELECT * FROM hotelreview", (error, results) => {
+    var end = performance.now();
+    console.log("Time elapsed to retrieve All hotelreview Data via SQL: " + (end - start));
+
     if (error) {
       throw error;
     }
@@ -149,10 +191,14 @@ const getHotelReview = (request, response) => {
   });
 };
 const getHotelReviewById = (request, response) => {
+  var start = performance.now();
   const id = parseInt(request.params.id);
   connection.query(
     "SELECT * FROM hotelreview WHERE hotelreviewid = " + [id],
     (error, results) => {
+      var end = performance.now();
+      console.log("Time elapsed to retrieve specific hotelreview Data via SQL: " + (end - start));
+  
       if (error) {
         throw error;
       }
@@ -162,7 +208,11 @@ const getHotelReviewById = (request, response) => {
 };
 
 const getBooking = (request, response) => {
+  var start = performance.now();
   connection.query("SELECT * FROM booking", (error, results) => {
+    var end = performance.now();
+    console.log("Time elapsed to retrieve All Booking Data via SQL: " + (end - start));
+
     if (error) {
       throw error;
     }
@@ -174,11 +224,15 @@ const getBooking = (request, response) => {
 //"SELECT * FROM Listing inner join HotelListingDetails on Listing.listingid = HotelListingDetails.listingid",
 
 const getBookingById = (request, response) => {
+  var start = performance.now();
   const id = parseInt(request.params.id);
   connection.query(
     "SELECT * FROM booking INNER JOIN listing ON booking.listingid = listing.listingid WHERE booking.bookingid = " +
       [id],
     (error, results) => {
+      var end = performance.now();
+      console.log("Time elapsed to retrieve specific Booking Data via SQL: " + (end - start));
+  
       if (error) {
         throw error;
       }
@@ -187,11 +241,15 @@ const getBookingById = (request, response) => {
   );
 };
 const getBookingByCustomerId = (request, response) => {
+  var start = performance.now();
   const id = parseInt(request.params.id);
   connection.query(
     "SELECT * FROM booking INNER JOIN listing on booking.listingid = listing.listingid WHERE booking.customerid = " +
       [id],
     (error, results) => {
+      var end = performance.now();
+      console.log("Time elapsed to retrieve specific Booking Data of a specific customer via SQL: " + (end - start));
+  
       if (error) {
         throw error;
       }
@@ -201,6 +259,7 @@ const getBookingByCustomerId = (request, response) => {
 };
 
 const createListing = (request, response) => {
+  var start = performance.now();
   const sql =
     "Insert into listing(hotelname,address,city ,amenities) values (?,?,?,?)";
   connection.query(
@@ -212,6 +271,9 @@ const createListing = (request, response) => {
       request.body.amenities,
     ],
     (error, results, fields) => {
+      var end = performance.now();
+      console.log("Time elapsed to create a Listing via SQL: " + (end - start));
+  
       if (error) {
         throw error;
       }
@@ -220,12 +282,16 @@ const createListing = (request, response) => {
   );
 };
 const createHotelReview = (request, response) => {
+  var start = performance.now();
   const sql =
     "Insert into hotelreview(listingid,ratings,reviews) values (?,?,?)";
   connection.query(
     sql,
     [request.body.listingid, request.body.ratings, request.body.reviews],
     (error, results, fields) => {
+      var end = performance.now();
+      console.log("Time elapsed to create a hotelreview via SQL: " + (end - start));
+  
       if (error) {
         throw error;
       }
@@ -234,12 +300,16 @@ const createHotelReview = (request, response) => {
   );
 };
 const createListingDetails = (request, response) => {
+  var start = performance.now();
   const sql =
     "Insert into hotellistingdetails( roomType, numOfRooms , listingid) values (?,?,?)";
   connection.query(
     sql,
     [request.body.roomType, request.body.numOfRooms, request.body.listingid],
     (error, results, fields) => {
+      var end = performance.now();
+      console.log("Time elapsed to create a Listing Detail via SQL: " + (end - start));
+  
       if (error) {
         throw error;
       }
@@ -264,7 +334,8 @@ const createBooking = (request, response) => {
     ],
     (error, results, fields) => {
       var end = performance.now();
-      console.log("Time used: " + (end - start));
+      console.log("Time elapsed to create booking Detail via SQL: " + (end - start));
+  
       if (error) {
         throw error;
       }
@@ -274,6 +345,7 @@ const createBooking = (request, response) => {
 };
 
 const createUser = (request, response) => {
+  var start = performance.now();
   var hashpass = crypto
     .createHash("md5")
     .update(request.body.password)
@@ -293,6 +365,9 @@ const createUser = (request, response) => {
           request.body.contactno,
         ],
         (error, results, fields) => {
+          var end = performance.now();
+          console.log("Time elapsed to create a user via SQL: " + (end - start));
+      
           response.status(200).send("Success");
         }
       );
@@ -303,6 +378,7 @@ const createUser = (request, response) => {
 };
 
 const updateUser = (request, response) => {
+  var start = performance.now();
   const sql =
     "update customer set name = ?, username = ?,password =?,address=?,contactno=? where customerid = ?";
   connection.query(
@@ -316,11 +392,15 @@ const updateUser = (request, response) => {
       request.body.customerid,
     ],
     (error, results, fields) => {
+      var end = performance.now();
+      console.log("Time elapsed to update a user info via SQL: " + (end - start));
+ 
       response.status(200).json(results);
     }
   );
 };
 const updateBooking = (request, response) => {
+  var start = performance.now();
   const sql =
     "update booking set checkindate = ?, checkoutdate =?,numofguest = ?,isCanceled =?,customerid= ?,roomType= ? where bookingid = ?";
   connection.query(
@@ -335,6 +415,9 @@ const updateBooking = (request, response) => {
       request.body.bookingid,
     ],
     (error, results, fields) => {
+      var end = performance.now();
+      console.log("Time elapsed to update a booking info via SQL: " + (end - start));
+ 
       if (error) {
         throw error;
       }
@@ -343,6 +426,7 @@ const updateBooking = (request, response) => {
   );
 };
 const updateListing = (request, response) => {
+  var start = performance.now();
   const sql =
     "update listing set hotelname = ?,address = ?,city =? ,amenities=? where listingid = ?";
   connection.query(
@@ -355,6 +439,9 @@ const updateListing = (request, response) => {
       request.body.listingid,
     ],
     (error, results, fields) => {
+      var end = performance.now();
+      console.log("Time elapsed to update a Listing info via SQL: " + (end - start));
+ 
       if (error) {
         throw error;
       }
@@ -364,6 +451,7 @@ const updateListing = (request, response) => {
 };
 
 const updateHotelReview = (request, response) => {
+  var start = performance.now();
   const sql =
     "update hotelreview set listingid = ?,ratings =?,reviews =? where hotelreviewid = ?";
   connection.query(
@@ -375,6 +463,9 @@ const updateHotelReview = (request, response) => {
       request.body.hotelreviewid,
     ],
     (error, results, fields) => {
+      var end = performance.now();
+      console.log("Time elapsed to update a hotelreview info via SQL: " + (end - start));
+ 
       if (error) {
         throw error;
       }
@@ -384,6 +475,7 @@ const updateHotelReview = (request, response) => {
 };
 
 const updateListingDetails = (request, response) => {
+  var start = performance.now();
   const sql =
     "update hotellistingdetails set roomType =?, numOfRooms =? , listingid =? where listingdetailid = ?";
   connection.query(
@@ -395,6 +487,9 @@ const updateListingDetails = (request, response) => {
       request.body.listingdetailid,
     ],
     (error, results, fields) => {
+      var end = performance.now();
+      console.log("Time elapsed to update a Listing Detail info via SQL: " + (end - start));
+ 
       if (error) {
         throw error;
       }
@@ -404,9 +499,13 @@ const updateListingDetails = (request, response) => {
 };
 
 const deleteUser = (request, response) => {
+  var start = performance.now();
   const id = parseInt(request.params.id);
   const sql = "delete from customer where customerid= ?";
   connection.query(sql, [id], (error, results, fields) => {
+    var end = performance.now();
+    console.log("Time elapsed to delete a user via SQL: " + (end - start));
+
     if (error) {
       throw error;
     }
@@ -414,9 +513,13 @@ const deleteUser = (request, response) => {
   });
 };
 const deleteBooking = (request, response) => {
+  var start = performance.now();
   const id = parseInt(request.params.id);
   const sql = "delete from booking where customerid= ?";
   connection.query(sql, [id], (error, results, fields) => {
+    var end = performance.now();
+    console.log("Time elapsed to delete a booking via SQL: " + (end - start));
+
     if (error) {
       throw error;
     }
@@ -424,9 +527,13 @@ const deleteBooking = (request, response) => {
   });
 };
 const deleteListing = (request, response) => {
+  var start = performance.now();
   const id = parseInt(request.params.id);
   const sql = "delete from listing where listingid= ?";
   connection.query(sql, [id], (error, results, fields) => {
+    var end = performance.now();
+    console.log("Time elapsed to delete a Listing via SQL: " + (end - start));
+
     if (error) {
       throw error;
     }
@@ -435,9 +542,13 @@ const deleteListing = (request, response) => {
 };
 
 const deleteListingDetails = (request, response) => {
+  var start = performance.now();
   const id = parseInt(request.params.id);
   const sql = "delete from hotellistingdetails where listingdetailid= ?";
   connection.query(sql, [id], (error, results, fields) => {
+    var end = performance.now();
+    console.log("Time elapsed to delete a Listing detail via SQL: " + (end - start));
+
     if (error) {
       throw error;
     }
@@ -445,9 +556,13 @@ const deleteListingDetails = (request, response) => {
   });
 };
 const deleteHotelReview = (request, response) => {
+  var start = performance.now();
   const id = parseInt(request.params.id);
   const sql = "delete from hotelreview where hotelreviewid= ?";
   connection.query(sql, [id], (error, results, fields) => {
+    var end = performance.now();
+    console.log("Time elapsed to delete hotelreview via SQL: " + (end - start));
+
     if (error) {
       throw error;
     }
