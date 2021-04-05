@@ -243,6 +243,7 @@ const createListingDetails = (request, response) => {
   );
 };
 const createBooking = (request, response) => {
+  var start = performance.now()
   const sql =
     "Insert into booking(checkindate, checkoutdate,numofguest,isCanceled,customerid,roomType, listingid) values (?,?,?,?,?,?,?)";
   connection.query(
@@ -257,6 +258,8 @@ const createBooking = (request, response) => {
       request.body.listingid,
     ],
     (error, results, fields) => {
+      var end = performance.now()
+      console.log("Time used: " + (end-start))
       if (error) {
         throw error;
       }
