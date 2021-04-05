@@ -1,23 +1,34 @@
 const MongoClient = require("mongodb").MongoClient;
 const MongoDBUrl = "mongodb://localhost:27017/MongoDB";
 const database = "MongoDB";
+var crypto = require("crypto");
 var objectId = require("mongodb").ObjectID;
+const { performance } = require("perf_hooks");
+
 
 const loginUser = (request, response) => {
-  MongoClient.connect(MongoDBUrl, function (err, client) {
+   MongoClient.connect(MongoDBUrl, function (err, client) {
+    var hashpass = crypto
+    .createHash("md5")
+    .update(request.body.password)
+    .digest("hex");
     if (err) throw err;
 
     var db = client.db(database);
     var userInfo = {
       username: request.body.username,
-      password: request.body.password,
+      password:hashpass,
     };
     console.log(request.body.username);
-    console.log(request.body.password);
+    console.log(hashpass);
 
     console.log(userInfo);
+ var start = performance.now();
 
     db.collection("customer").findOne(userInfo, function (err, result) {
+      var end = performance.now();
+      console.log("Time elapsed to Login Via MongoDB: " + (end - start));
+  
       if (err) throw err;
 
       response.status(200).json(result);
@@ -26,14 +37,18 @@ const loginUser = (request, response) => {
 };
 
 const getCustomers = (request, response) => {
-  MongoClient.connect(MongoDBUrl, function (err, client) {
+   MongoClient.connect(MongoDBUrl, function (err, client) {
     if (err) throw err;
 
     var db = client.db(database);
+ var start = performance.now();
 
     db.collection("customer")
       .find()
       .toArray(function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to retrieve All Customer info Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -47,10 +62,14 @@ const getCustomersById = (request, response) => {
 
     var db = client.db(database);
     var customerId = request.params.id;
-
+ var start = performance.now();
+ 
     db.collection("customer").findOne(
       { _id: objectId(customerId) },
       function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to retrieve specific Customer info Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -60,14 +79,18 @@ const getCustomersById = (request, response) => {
 };
 
 const getHotelListing = (request, response) => {
-  MongoClient.connect(MongoDBUrl, function (err, client) {
+ MongoClient.connect(MongoDBUrl, function (err, client) {
     if (err) throw err;
 
     var db = client.db(database);
-
+  var start = performance.now();
+ 
     db.collection("listing")
       .find()
       .toArray(function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to retrieve All hotel listing info Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -81,10 +104,14 @@ const getHotelListingById = (request, response) => {
 
     var db = client.db(database);
     var hotelId = request.body.hotelId;
-
+ var start = performance.now();
+ 
     db.collection("listing").findOne(
       { _id: objectId(hotelId) },
       function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to retrieve specific hotel listing info Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -98,10 +125,14 @@ const getHotelListingDetails = (request, response) => {
     if (err) throw err;
 
     var db = client.db(database);
-
+ var start = performance.now();
+ 
     db.collection("hotellistingdetails")
       .find()
       .toArray(function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to retrieve All hotel listing details info Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -115,10 +146,14 @@ const getHotelListingDetailsById = (request, response) => {
 
     var db = client.db(database);
     var hotelListingDetailId = request.body.hotelListingDetailId;
-
+ var start = performance.now();
+ 
     db.collection("hotellistingdetails").findOne(
       { _id: objectId(hotelListingDetailId) },
       function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to retrieve specific hotel listing details info Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -132,10 +167,14 @@ const getHotelReview = (request, response) => {
     if (err) throw err;
 
     var db = client.db(database);
-
+ var start = performance.now();
+ 
     db.collection("hotelreview")
       .find()
       .toArray(function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to retrieve All hotelreview info Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -149,10 +188,14 @@ const getHotelReviewById = (request, response) => {
 
     var db = client.db(database);
     var hotelReviewId = request.body.hotelReviewId;
-
+ var start = performance.now();
+ 
     db.collection("hotelreview").findOne(
       { _id: objectId(hotelReviewId) },
       function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to retrieve specific hotelreview info Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -162,11 +205,12 @@ const getHotelReviewById = (request, response) => {
 };
 
 const getHotelListingWithDetails = (request, response) => {
-  MongoClient.connect(MongoDBUrl, function (err, client) {
+ MongoClient.connect(MongoDBUrl, function (err, client) {
     if (err) throw err;
 
     var db = client.db(database);
-
+ var start = performance.now();
+  
     db.collection("listing")
       .aggregate([
         {
@@ -179,6 +223,9 @@ const getHotelListingWithDetails = (request, response) => {
         },
       ])
       .toArray(function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to retrieve All listing with details info Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -192,7 +239,8 @@ const getHotelListingWithDetailsById = (request, response) => {
 
     var db = client.db(database);
     var listingId = request.params.id;
-
+ var start = performance.now();
+   
     db.collection("listing")
       .aggregate([
         {
@@ -205,6 +253,9 @@ const getHotelListingWithDetailsById = (request, response) => {
         },
       ])
       .toArray(function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to retrieve specific listing with details info Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -214,14 +265,18 @@ const getHotelListingWithDetailsById = (request, response) => {
 
 const getBooking = (request, response) => {
   MongoClient.connect(MongoDBUrl, function (err, client) {
+   
     if (err) throw err;
 
     var db = client.db(database);
     var bookingId = request.body.bookingId;
-
+ var start = performance.now();
     db.collection("bookings")
       .find()
       .toArray(function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to retrieve All bookings Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -231,12 +286,13 @@ const getBooking = (request, response) => {
 
 const getBookingById = (request, response) => {
   MongoClient.connect(MongoDBUrl, function (err, client) {
+   
     if (err) throw err;
 
     var db = client.db(database);
     bookingId = request.params.id;
     console.log("request is ", request.params.id);
-
+ var start = performance.now();
     var json = db
       .collection("bookings")
       .aggregate([
@@ -254,9 +310,13 @@ const getBookingById = (request, response) => {
         },
       ])
       .toArray(function (err, result) {
+      
         if (err) throw err;
         result.mongo = 1;
-        console.log(result);
+        console.log(result);  
+        var end = performance.now();
+        console.log("Time elapsed to retrieve specific bookings Via MongoDB: " + (end - start));
+    
         response.status(200).json(result);
       });
   });
@@ -321,6 +381,10 @@ const getBookingById = (request, response) => {
 
 const createUser = (request, response) => {
   MongoClient.connect(MongoDBUrl, function (err, client) {
+    var hashpass = crypto
+    .createHash("md5")
+    .update(request.body.password)
+    .digest("hex");
     if (err) throw err;
 
     var db = client.db(database);
@@ -329,10 +393,13 @@ const createUser = (request, response) => {
       address: request.body.address,
       contactno: request.body.contactno,
       username: request.body.username,
-      password: request.body.password,
+      password: hashpass,
     };
-
+    var start = performance.now();
     db.collection("customer").insertOne(user, function (err, result) {
+      var end = performance.now();
+      console.log("Time elapsed to create user Via MongoDB: " + (end - start));
+  
       if (err) throw err;
 
       response.status(200).json(result);
@@ -341,7 +408,9 @@ const createUser = (request, response) => {
 };
 
 const createBooking = (request, response) => {
+
   MongoClient.connect(MongoDBUrl, function (err, client) {
+    
     if (err) throw err;
 
     var db = client.db(database);
@@ -357,8 +426,11 @@ const createBooking = (request, response) => {
       roomType: request.body.roomType,
       listingid: objectId(request.body.listingid),
     };
-
+  var start = performance.now();
     db.collection("bookings").insertOne(booking, function (err, result) {
+      var end = performance.now();
+      console.log("Time elapsed to create booking Via MongoDB: " + (end - start));
+  
       if (err) throw err;
 
       response.status(200).json(result);
@@ -376,8 +448,11 @@ const createHotelReview = (request, response) => {
       ratings: request.body.ratings,
       reviews: request.body.reviews,
     };
-
+    var start = performance.now();
     db.collection("hotelreview").insertOne(hotelReview, function (err, result) {
+      var end = performance.now();
+      console.log("Time elapsed to create hotelreview Via MongoDB: " + (end - start));
+  
       if (err) throw err;
 
       response.status(200).json(result);
@@ -395,10 +470,13 @@ const createListingDetails = (request, response) => {
       numOfRooms: request.body.numOfRooms,
       listingid: request.body.listingid,
     };
-
+    var start = performance.now();
     db.collection("hotellistingdetails").insertOne(
       listingDetails,
       function (err, result) {
+        var end = performance.now();
+      console.log("Time elapsed to create hotel listing detail Via MongoDB: " + (end - start));
+  
         if (err) throw err;
 
         response.status(200).json(result);
@@ -418,8 +496,11 @@ const createListing = (request, response) => {
       city: request.body.city,
       amenities: request.body.amenities,
     };
-
+    var start = performance.now();
     db.collection("hotellisting").insertOne(listing, function (err, result) {
+      var end = performance.now();
+      console.log("Time elapsed to create hotel listing Via MongoDB: " + (end - start));
+  
       if (err) throw err;
 
       response.status(200).json(result);
@@ -441,11 +522,14 @@ const updateUser = (request, response) => {
     };
 
     var customerId = request.body.customerId;
-
+    var start = performance.now();
     db.collection("customer").updateOne(
       { _id: objectId(customerId) },
       { $set: updateUser },
       function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to update user info Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -469,11 +553,15 @@ const updateBooking = (request, response) => {
     };
 
     var bookingId = request.body.bookingId;
-
+    var start = performance.now();
     db.collection("bookings").updateOne(
       { _id: objectId(bookingId) },
       { $set: updateBooking },
       function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to update booking info Via MongoDB: " + (end - start));
+    
+      
         if (err) throw err;
 
         response.status(200).json(result);
@@ -494,11 +582,14 @@ const updateHotelReview = (request, response) => {
     };
 
     var hotelReviewId = request.body.hotelReviewId;
-
+    var start = performance.now();
     db.collection("hotelreview").updateOne(
       { _id: objectId(hotelReviewId) },
       { $set: updateHotelReview },
       function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to update hotel review info Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -520,11 +611,14 @@ const updateListing = (request, response) => {
     };
 
     var listingId = request.body.listingId;
-
+    var start = performance.now();
     db.collection("listing").updateOne(
       { _id: objectId(listingId) },
       { $set: updateListing },
       function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to update hotel listing info Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -545,11 +639,14 @@ const updateListingDetails = (request, response) => {
     };
 
     var listingDetailsId = request.body.listingDetails;
-
+    var start = performance.now();
     db.collection("hotellistingdetails").updateOne(
       { _id: objectId(listingDetailsId) },
       { $set: updateListingDetails },
       function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to update hotel listing detail info Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -564,10 +661,13 @@ const deleteBooking = (request, response) => {
 
     var db = client.db(database);
     var customerId = request.body.customerId;
-
+    var start = performance.now();
     db.collection("bookings").deleteOne(
       { _id: objectId(customerId) },
       function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to delete booking Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -582,10 +682,13 @@ const deleteHotelReview = (request, response) => {
 
     var db = client.db(database);
     var hotelReviewId = request.body.hotelReviewId;
-
+    var start = performance.now();
     db.collection("hotelreview").deleteOne(
       { _id: objectId(hotelReviewId) },
       function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to delete specific hotel review Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -600,10 +703,13 @@ const deleteListing = (request, response) => {
 
     var db = client.db(database);
     var listingId = request.body.listingId;
-
+    var start = performance.now();
     db.collection("listing").deleteOne(
       { _id: objectId(listingId) },
       function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to delete specific Listing Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -618,10 +724,13 @@ const deleteListingDetails = (request, response) => {
 
     var db = client.db(database);
     var hotelListingDetailId = request.body.hotelListingDetailId;
-
+    var start = performance.now();
     db.collection("hotellistingdetails").deleteOne(
       { _id: objectId(hotelListingDetailId) },
       function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to delete specific hotel listing details Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -636,10 +745,13 @@ const deleteUser = (request, response) => {
 
     var db = client.db(database);
     var customerId = request.body.customerId;
-
+    var start = performance.now();
     db.collection("customer").deleteOne(
       { _id: objectId(customerId) },
       function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to delete specific user Via MongoDB: " + (end - start));
+    
         if (err) throw err;
 
         response.status(200).json(result);
@@ -656,7 +768,7 @@ const getBookingByCustomerId = (request, response) => {
     var customerId = request.params.id;
     console.log("input", customerId);
     console.log("input", objectId(customerId));
-
+    var start = performance.now();
     db.collection("bookings")
       .aggregate([
         { $match: { customerid: objectId(customerId) } },
@@ -673,6 +785,9 @@ const getBookingByCustomerId = (request, response) => {
         },
       ])
       .toArray(function (err, result) {
+        var end = performance.now();
+        console.log("Time elapsed to retrieve specific bookings Via MongoDB: " + (end - start));
+    
         if (err) throw err;
         response.status(200).json(result);
       });
