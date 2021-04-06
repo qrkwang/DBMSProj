@@ -865,10 +865,11 @@ const BookingHotel = (props) => {
               amenities: responseData[0].amenities,
             };
             setHotelDetails(hotelDetailsObj);
-            responseData[0].hotellistingwithdetails.map((item) => {
+            responseData.map((item) => {
+              console.log(item);
               var hotelRoomObj = {};
-              hotelRoomObj.roomType = item.roomType;
-              hotelRoomObj.numOfRooms = item.numOfRooms;
+              hotelRoomObj.roomType = item.hotellistingwithdetails.roomType;
+              hotelRoomObj.numOfRooms = item.hotellistingwithdetails.numOfRooms;
               console.log("hotel room obj", hotelRoomObj);
               hotelRoomArray.push(hotelRoomObj);
             });
@@ -1316,6 +1317,7 @@ const Dashboard = (props) => {
             responseData.map((item) => {
               item.listingid = item._id;
             });
+            console.log(responseData);
             sethotelListing(responseData);
           }
         } else {
@@ -1700,6 +1702,7 @@ const MyBookings = (props) => {
           var list = [];
           responseData.map((item) => {
             var myBookingObj = {
+              bookingid: item._id,
               checkindate: item.checkindate,
               checkoutdate: item.checkoutdate,
               customerid: item.customerid,

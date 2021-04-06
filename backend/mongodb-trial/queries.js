@@ -269,6 +269,7 @@ const getHotelListingWithDetailsById = (request, response) => {
 
     db.collection("listing")
       .aggregate([
+        { $match: { _id: objectId(listingId) } },
         {
           $lookup: {
             from: "hotellistingdetails",
@@ -276,6 +277,9 @@ const getHotelListingWithDetailsById = (request, response) => {
             foreignField: "listingid",
             as: "hotellistingwithdetails",
           },
+        },
+        {
+          $unwind: "$hotellistingwithdetails",
         },
       ])
       .toArray(function (err, result) {
@@ -474,7 +478,7 @@ const createListing = (request, response) => {
       amenities: request.body.amenities,
     };
     var start = performance.now();
-    db.collection("hotellisting").insertOne(listing, function (err, result) {
+    db.collection("listing").insertOne(listing, function (err, result) {
       var end = performance.now();
       console.log(
         "Time elapsed to create hotel listing Via MongoDB: " + (end - start)
