@@ -47,7 +47,7 @@ import { ContactSupportOutlined } from "@material-ui/icons";
 //Made axios global
 const axios = require("axios"); //use axios for http requests
 const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axios for http requests
-const isMongo = 0;
+const isMongo = 1;
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -1506,7 +1506,7 @@ const Profile = (props) => {
         console.log(responseData);
         if (isMongo == 1) {
           responseData.id = responseData._id;
-          responseData.contactNo = responseData.contactNo;
+          responseData.contactNo = responseData.contactno;
           setmyProfile(responseData);
         } else {
           if (Array.isArray(responseData)) {
